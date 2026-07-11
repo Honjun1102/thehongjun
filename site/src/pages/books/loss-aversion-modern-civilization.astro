@@ -1,0 +1,580 @@
+---
+import fs from "node:fs";
+import path from "node:path";
+import Layout from "../../layouts/Layout.astro";
+import SiteHeader from "../../components/SiteHeader.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import { siteMeta } from "../../data/site";
+
+const bookDir = path.resolve(
+  process.cwd(),
+  "..",
+  "books",
+  "损失厌恶：现代文明的底层逻辑",
+);
+
+const chapterFiles = [
+  "引言，脆弱的承重墙.html",
+  "第一章：理论基石.html",
+  "第二章：个体篇.html",
+  "第三章：权力与关系.html",
+  "第四章：社会机器.html",
+  "第五章：破局与结语.html",
+];
+
+function stripTags(html: string) {
+  return html
+    .replace(/<br\s*\/?>/gi, " ")
+    .replace(/<[^>]+>/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function chapterTitle(fileName: string, html: string) {
+  const headerTitle = html.match(/<header[\s\S]*?<h1[^>]*>([\s\S]*?)<\/h1>[\s\S]*?<\/header>/i);
+  if (headerTitle) return stripTags(headerTitle[1]);
+
+  const mainTitle = html.match(/<main[\s\S]*?<h2[^>]*>([\s\S]*?)<\/h2>/i);
+  if (mainTitle) {
+    return stripTags(mainTitle[1]).replace(/^0?(\d+)\.\s*/, "第$1章：");
+  }
+
+  const documentTitle = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
+  return documentTitle ? stripTags(documentTitle[1]) : fileName.replace(/\.html$/, "");
+}
+
+function chapterHtml(html: string) {
+  const mainMatch = html.match(/<main[^>]*>([\s\S]*?)<\/main>/i);
+  let main = mainMatch ? mainMatch[1] : html;
+
+  main = main
+    .replace(/<!--\s*Navigation\s*-->[\s\S]*$/i, "")
+    .replace(/<div[^>]*class="[^"]*\bNavigation\b[^"]*"[\s\S]*?<\/div>/gi, "")
+    .replace(/<nav[\s\S]*?<\/nav>/gi, "")
+    .replace(/<script[\s\S]*?<\/script>/gi, "")
+    .replace(/<style[\s\S]*?<\/style>/gi, "")
+    .replace(/^\s*<section[^>]*>\s*/i, "")
+    .replace(/\s*<\/section>\s*$/i, "");
+
+  main = main.replace(/^\s*<h[12][^>]*>[\s\S]*?<\/h[12]>\s*/i, "");
+
+  return main.trim();
+}
+
+const chapters = chapterFiles.map((fileName, index) => {
+  const source = fs.readFileSync(path.join(bookDir, fileName), "utf8");
+  return {
+    id: `chapter-${index}`,
+    number: index === 0 ? "引言" : `第 ${index} 章`,
+    title: chapterTitle(fileName, source),
+    html: chapterHtml(source),
+  };
+});
+
+const title = "损失厌恶：现代文明的底层逻辑";
+const subtitle = "从心理承重墙看现代人的恐惧、关系与社会机器";
+const description =
+  "《损失厌恶：现代文明的底层逻辑》站内全文阅读页。用心理承重墙和损失厌恶解释现代人的焦虑、关系控制、社会内卷与破局路径。";
+---
+
+<Layout title={`${title} | ${siteMeta.title}`} description={description}>
+  <SiteHeader />
+
+  <main class="shell section loss-book">
+    <section class="card book-hero">
+      <div class="book-copy">
+        <div class="cover-head">
+          <p class="eyebrow">书稿</p>
+          <p class="cover-kicker">站内全文阅读</p>
+        </div>
+        <div class="title-block">
+          <h1 class="page-title">{title}</h1>
+          <p class="book-subtitle">{subtitle}</p>
+        </div>
+        <p class="lede">
+          这本书处理的不是“人为什么不够积极”，而是人为什么会被损失、跌落、背叛、失业和社会性死亡的想象反复绑架。
+        </p>
+        <p class="hero-note">
+          它从行为经济学的损失厌恶出发，落到个体心理、权力关系、社会机器，最后回到一个人如何拆掉伪承重墙、重建自己的分布式稳定性。
+        </p>
+        <div class="button-row">
+          <a class="button button-primary" href="#reader">直接开始阅读</a>
+          <a class="button button-secondary" href="#toc">先看目录</a>
+        </div>
+      </div>
+
+      <aside class="card panel pull-quote">
+        <p class="eyebrow">封面题签</p>
+        <p>人类根本不是在追求幸福，而是在提防跌落，防止系统崩溃。</p>
+        <div class="cover-mark">
+          <span>ZH</span>
+          <span>{chapters.length} PARTS</span>
+        </div>
+      </aside>
+    </section>
+
+    <section class="content-grid">
+      <details class="card panel mobile-toc">
+        <summary class="mobile-toc-toggle">
+          <span class="eyebrow">目录</span>
+          <strong>先看结构，再进入正文</strong>
+        </summary>
+        <nav class="toc-list mobile-toc-list" aria-label="书稿目录">
+          {
+            chapters.map((chapter) => (
+              <a class="toc-link toc-link-major" data-toc-link href={`#${chapter.id}`}>
+                <span class="toc-number">{chapter.number}</span>
+                {chapter.title}
+              </a>
+            ))
+          }
+        </nav>
+      </details>
+
+      <aside class="card panel toc-card" id="toc">
+        <div class="toc-head">
+          <p class="eyebrow">目录</p>
+          <p class="toc-copy">这本书按“理论基石 → 个体系统 → 关系权力 → 社会机器 → 破局”推进。</p>
+        </div>
+        <nav class="toc-list" aria-label="书稿目录">
+          {
+            chapters.map((chapter) => (
+              <a class="toc-link toc-link-major" data-toc-link href={`#${chapter.id}`}>
+                <span class="toc-number">{chapter.number}</span>
+                {chapter.title}
+              </a>
+            ))
+          }
+        </nav>
+      </aside>
+
+      <article class="card panel html-reader" id="reader">
+        {
+          chapters.map((chapter) => (
+            <section class="html-chapter" id={chapter.id}>
+              <p class="reader-chapter-kicker">{chapter.number}</p>
+              <h2 class="reader-h1">{chapter.title}</h2>
+              <div class="html-flow" set:html={chapter.html} />
+            </section>
+          ))
+        }
+      </article>
+    </section>
+  </main>
+
+  <SiteFooter />
+
+  <script is:inline>
+    (() => {
+      const links = Array.from(document.querySelectorAll("[data-toc-link]"));
+      const sections = links
+        .map((link) => {
+          const id = link.getAttribute("href")?.slice(1);
+          const section = id ? document.getElementById(id) : null;
+          return section ? { link, section } : null;
+        })
+        .filter(Boolean);
+
+      if (!sections.length) return;
+
+      const activate = (id) => {
+        sections.forEach(({ link, section }) => {
+          const active = section.id === id;
+          link.classList.toggle("is-active", active);
+          if (active) link.setAttribute("aria-current", "true");
+          else link.removeAttribute("aria-current");
+        });
+      };
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          const visible = entries
+            .filter((entry) => entry.isIntersecting)
+            .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+          if (visible.length) activate(visible[0].target.id);
+        },
+        { rootMargin: "-18% 0px -62% 0px", threshold: [0.1, 0.25, 0.5, 0.75] },
+      );
+
+      sections.forEach(({ section }) => observer.observe(section));
+      activate(window.location.hash.slice(1) || sections[0].section.id);
+    })();
+  </script>
+</Layout>
+
+<style>
+  .loss-book {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .book-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(16rem, 0.72fr);
+    gap: 1.25rem;
+    padding: clamp(1.4rem, 3vw, 2rem);
+    align-items: start;
+  }
+
+  .book-copy,
+  .pull-quote,
+  .toc-head {
+    display: grid;
+    gap: 0.9rem;
+  }
+
+  .cover-head {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .cover-kicker,
+  .toc-number {
+    color: var(--ink-muted);
+    font: 500 0.74rem/1 var(--font-mono);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .title-block {
+    display: grid;
+    gap: 0.5rem;
+    padding: 0.2rem 0 0.95rem;
+    border-bottom: 1px solid rgba(23, 21, 18, 0.12);
+  }
+
+  .book-subtitle {
+    margin: 0;
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-size: clamp(1.18rem, 2.2vw, 1.5rem);
+    line-height: 1.35;
+    max-width: 28rem;
+  }
+
+  .book-copy p,
+  .pull-quote p,
+  .toc-head p {
+    margin: 0;
+  }
+
+  .hero-note {
+    max-width: 38rem;
+    color: var(--ink-muted);
+    line-height: 1.85;
+  }
+
+  .pull-quote {
+    align-content: start;
+    background:
+      linear-gradient(180deg, rgba(251, 248, 242, 0.92), rgba(245, 237, 222, 0.82)),
+      radial-gradient(circle at top right, rgba(143, 52, 40, 0.1), transparent 42%);
+  }
+
+  .pull-quote p:nth-child(2) {
+    font-family: var(--font-display);
+    font-size: clamp(1.35rem, 2.8vw, 2rem);
+    line-height: 1.35;
+  }
+
+  .cover-mark {
+    display: flex;
+    gap: 0.75rem;
+    color: var(--ink-muted);
+    font: 500 0.74rem/1 var(--font-mono);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .content-grid {
+    display: grid;
+    grid-template-columns: minmax(16rem, 19rem) minmax(0, 1fr);
+    gap: 1.25rem;
+    align-items: start;
+  }
+
+  .mobile-toc {
+    display: none;
+  }
+
+  .mobile-toc-toggle {
+    display: grid;
+    gap: 0.25rem;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .mobile-toc-toggle::-webkit-details-marker {
+    display: none;
+  }
+
+  .toc-card {
+    position: sticky;
+    top: 6rem;
+    display: grid;
+    gap: 1rem;
+    max-height: calc(100vh - 7.5rem);
+    overflow: auto;
+  }
+
+  .toc-copy {
+    color: var(--ink-muted);
+    line-height: 1.7;
+  }
+
+  .toc-list {
+    display: grid;
+    gap: 0.55rem;
+  }
+
+  .toc-link {
+    display: grid;
+    gap: 0.18rem;
+    color: var(--ink-muted);
+    line-height: 1.5;
+    transition: color 160ms ease, transform 160ms ease;
+  }
+
+  .toc-link:hover,
+  .toc-link.is-active {
+    color: var(--ink);
+    transform: translateX(2px);
+  }
+
+  .toc-link-major {
+    font-family: var(--font-display);
+    font-size: 1.02rem;
+  }
+
+  .toc-link-major.is-active {
+    text-decoration: underline;
+    text-decoration-color: rgba(155, 77, 34, 0.55);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.28rem;
+  }
+
+  .html-reader {
+    padding: clamp(1.35rem, 3vw, 2.2rem);
+  }
+
+  .html-chapter {
+    width: min(100%, 46rem);
+    margin: 0 auto;
+    padding: 0 0 clamp(3rem, 6vw, 4.5rem);
+  }
+
+  .html-chapter + .html-chapter {
+    padding-top: clamp(2.3rem, 5vw, 3.8rem);
+    border-top: 1px solid rgba(23, 21, 18, 0.12);
+  }
+
+  .reader-chapter-kicker {
+    margin: 0 0 0.55rem;
+    color: var(--accent);
+    font: 500 0.75rem/1 var(--font-mono);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .reader-h1 {
+    margin: 0 0 clamp(1.25rem, 3vw, 1.8rem);
+    font-family: var(--font-display);
+    font-size: clamp(1.85rem, 4vw, 3rem);
+    line-height: 1.16;
+    letter-spacing: 0;
+  }
+
+  .html-flow :global(*) {
+    box-sizing: border-box;
+  }
+
+  .html-flow :global(section),
+  .html-flow :global(footer) {
+    margin: 0;
+  }
+
+  .html-flow :global(h1),
+  .html-flow :global(h2),
+  .html-flow :global(h3) {
+    margin: 2rem 0 0.9rem;
+    color: var(--ink);
+    font-family: var(--font-display);
+    letter-spacing: 0;
+    line-height: 1.25;
+  }
+
+  .html-flow :global(h3) {
+    font-size: clamp(1.2rem, 2.4vw, 1.55rem);
+  }
+
+  .html-flow :global(p),
+  .html-flow :global(li) {
+    color: var(--ink);
+    font-size: clamp(1rem, 1.2vw, 1.08rem);
+    line-height: 2;
+  }
+
+  .html-flow :global(p) {
+    margin: 0 0 1.05rem;
+  }
+
+  .html-flow :global(ul),
+  .html-flow :global(ol) {
+    margin: 1.1rem 0 1.4rem;
+    padding-left: 1.35rem;
+  }
+
+  .html-flow :global(li + li) {
+    margin-top: 0.7rem;
+  }
+
+  .html-flow :global(strong) {
+    color: #8f3428;
+    font-weight: 700;
+    text-decoration: underline;
+    text-decoration-color: rgba(143, 52, 40, 0.22);
+    text-decoration-thickness: 0.22em;
+    text-underline-offset: -0.08em;
+    text-decoration-skip-ink: none;
+  }
+
+  .html-flow :global(.quote-block),
+  .html-flow :global(.concept-card),
+  .html-flow :global(.action-step),
+  .html-flow :global([class*="bg-"]) {
+    margin: 1.55rem 0;
+    padding: clamp(1.1rem, 2.5vw, 1.55rem);
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(143, 52, 40, 0.15);
+    background:
+      linear-gradient(180deg, rgba(255, 252, 247, 0.92), rgba(247, 241, 231, 0.78));
+    box-shadow: 0 14px 32px rgba(32, 20, 12, 0.05);
+  }
+
+  .html-flow :global(.quote-block) {
+    border-left: 0.28rem solid #8f3428;
+    background:
+      linear-gradient(90deg, rgba(143, 52, 40, 0.12), rgba(255, 252, 247, 0.9) 42%),
+      linear-gradient(180deg, rgba(255, 252, 247, 0.96), rgba(247, 241, 231, 0.82));
+  }
+
+  .html-flow :global(.quote-block strong),
+  .html-flow :global(.quote-block p:first-child) {
+    color: #7e2f25;
+  }
+
+  .html-flow :global(.concept-card) {
+    border-color: rgba(155, 77, 34, 0.2);
+    background:
+      radial-gradient(circle at top right, rgba(155, 77, 34, 0.08), transparent 36%),
+      linear-gradient(180deg, rgba(255, 252, 247, 0.96), rgba(248, 240, 226, 0.82));
+  }
+
+  .html-flow :global(.action-step) {
+    border-color: rgba(23, 21, 18, 0.2);
+    background:
+      linear-gradient(90deg, rgba(23, 21, 18, 0.06), transparent 28%),
+      linear-gradient(180deg, rgba(255, 252, 247, 0.96), rgba(246, 240, 228, 0.8));
+  }
+
+  .html-flow :global(.action-step h3) {
+    color: #3a3028;
+  }
+
+  .html-flow :global(.action-step:nth-of-type(1)) {
+    border-left: 0.32rem solid #8f3428;
+  }
+
+  .html-flow :global(.action-step:nth-of-type(2)) {
+    border-left: 0.32rem solid #4f6b45;
+  }
+
+  .html-flow :global(.action-step:nth-of-type(3)) {
+    border-left: 0.32rem solid #9b4d22;
+  }
+
+  .html-flow :global([class*="text-red"]) {
+    color: #8f3428 !important;
+  }
+
+  .html-flow :global([class*="text-green"]) {
+    color: #4f6b45 !important;
+  }
+
+  .html-flow :global([class*="text-yellow"]),
+  .html-flow :global([class*="text-amber"]),
+  .html-flow :global([class*="text-orange"]) {
+    color: #9b4d22 !important;
+  }
+
+  .html-flow :global([class*="text-gray"]),
+  .html-flow :global([class*="text-white"]) {
+    color: inherit;
+  }
+
+  .html-flow :global([class*="bg-red"]) {
+    background:
+      linear-gradient(180deg, rgba(143, 52, 40, 0.12), rgba(255, 252, 247, 0.88));
+    border-color: rgba(143, 52, 40, 0.2);
+  }
+
+  .html-flow :global([class*="bg-green"]) {
+    background:
+      linear-gradient(180deg, rgba(79, 107, 69, 0.12), rgba(255, 252, 247, 0.88));
+    border-color: rgba(79, 107, 69, 0.2);
+  }
+
+  .html-flow :global(.highlight-red) {
+    color: #8f3428;
+    background:
+      linear-gradient(120deg, rgba(143, 52, 40, 0.18), rgba(143, 52, 40, 0.18)) 0 78% / 100% 42% no-repeat;
+  }
+
+  .html-flow :global([class*="font-black"]),
+  .html-flow :global([class*="font-bold"]) {
+    font-weight: 700;
+  }
+
+  .html-flow :global([class*="text-center"]) {
+    text-align: center;
+  }
+
+  .html-flow :global([class*="border-l-4"]) {
+    border-left: 0.28rem solid #8f3428;
+  }
+
+  .html-flow :global(a) {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 0.22rem;
+  }
+
+  @media (max-width: 960px) {
+    .book-hero,
+    .content-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .toc-card {
+      display: none;
+    }
+
+    .mobile-toc {
+      display: block;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .book-hero,
+    .html-reader {
+      padding: 1rem;
+    }
+
+    .meta-row {
+      grid-template-columns: 1fr;
+      gap: 0.3rem;
+    }
+  }
+</style>

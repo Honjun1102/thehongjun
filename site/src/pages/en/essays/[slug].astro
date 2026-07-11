@@ -1,0 +1,442 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import EnglishHeader from "../../../components/EnglishHeader.astro";
+import EnglishFooter from "../../../components/EnglishFooter.astro";
+import { englishEssays, englishSiteMeta } from "../../../data/english";
+import { getChineseSlugFromEnglish } from "../../../data/essayLinks";
+
+export async function getStaticPaths() {
+  return englishEssays.map((essay) => ({
+    params: { slug: essay.slug },
+    props: { essay },
+  }));
+}
+
+const { essay } = Astro.props;
+const chineseSlug = getChineseSlugFromEnglish(essay.slug);
+const isMethodBridge =
+  essay.slug === "why-the-simplest-principles-are-often-closest-to-reality";
+const articlePath = `/en/essays/${essay.slug}/`;
+const articleUrl = new URL(articlePath, Astro.site ?? "https://www.thehongjun.com").toString();
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: essay.title,
+  description: essay.description,
+  datePublished: essay.publishedAt,
+  author: {
+    "@type": "Person",
+    name: "Hong Jun",
+  },
+  publisher: {
+    "@type": "Organization",
+    name: "Hong Jun",
+  },
+  mainEntityOfPage: articleUrl,
+  inLanguage: "en",
+  url: articleUrl,
+};
+const headings = essay.blocks
+  .filter((block) => block.type === "heading")
+  .map((block) => block.text);
+const introBlocks = [];
+const contentBlocks = [];
+
+let bodyStarted = false;
+for (const block of essay.blocks) {
+  if (!bodyStarted && block.type === "heading") {
+    bodyStarted = true;
+  }
+
+  if (bodyStarted) {
+    contentBlocks.push(block);
+  } else {
+    introBlocks.push(block);
+  }
+}
+---
+
+<Layout
+  title={`${essay.title} | ${englishSiteMeta.title}`}
+  description={essay.description}
+  ogType="article"
+  lang="en"
+  structuredData={structuredData}
+>
+  <EnglishHeader />
+
+  <main class="shell section essay-shell">
+    <article class="essay-page">
+      <header class="essay-hero card">
+        <div class="essay-hero-main">
+          <div class="hero-topline">
+            <a class="essay-back" href="/en/essays/">Back to Essays</a>
+            {chineseSlug && <a class="lang-jump" href={`/essays/${chineseSlug}/`}>Chinese Original</a>}
+          </div>
+          <p class="essay-meta-line">
+            <span class="essay-pill">{essay.category}</span>
+            {isMethodBridge && <span class="essay-pill essay-pill-accent">Method Bridge</span>}
+            <span>{essay.publishedAt}</span>
+            <span>{essay.blocks.length} blocks</span>
+          </p>
+          <h1 class="essay-title">{essay.title}</h1>
+          <p class="essay-deck">{essay.description}</p>
+        </div>
+
+          <div class="essay-hero-note">
+            <p class="eyebrow">Reading Mode</p>
+            {
+              isMethodBridge ? (
+                <p>
+                  This is not a random extra. It is the methodological bridge of the project:
+                  the essay that explains why strong methods keep forcing us back to the
+                  simplest truth that reality will not let us fake.
+                </p>
+              ) : (
+                <p>
+                  This page is designed as a long-form reading space. Slow down here. Let the
+                  argument stack instead of skimming for takeaways.
+                </p>
+              )
+            }
+          </div>
+      </header>
+
+      <div class="essay-stage">
+        <aside class="essay-rail">
+          <div class="card rail-card">
+            <p class="eyebrow">Guide</p>
+            <h2>Section Map</h2>
+            {
+              headings.length ? (
+                <ol class="essay-toc">
+                  {headings.map((heading, index) => <li>{index + 1}. {heading}</li>)}
+                </ol>
+              ) : (
+                <p class="muted">This essay moves as a continuous line of argument.</p>
+              )
+            }
+          </div>
+
+          <div class="card rail-card rail-quote">
+            <p class="eyebrow">Core Line</p>
+            <p>
+              The point is not just to think clearly. The point is to rebuild a type of
+              person who can stand clearly inside history, technology, and daily life.
+            </p>
+          </div>
+        </aside>
+
+        <div class="essay-body card">
+          {
+            introBlocks.length > 0 && (
+              <section class="essay-opening">
+                {introBlocks.map((block) => <p class="opening-paragraph">{block.text}</p>)}
+              </section>
+            )
+          }
+
+          <div class="essay-divider" aria-hidden="true"></div>
+
+          <div class="essay-prose">
+            {
+              contentBlocks.map((block) =>
+                block.type === "heading" ? <h2>{block.text}</h2> : <p>{block.text}</p>,
+              )
+            }
+          </div>
+
+          <footer class="essay-end">
+            <div class="essay-divider" aria-hidden="true"></div>
+            <p class="essay-end-note">If you reached the end, you are already inside the internal scale of this project.</p>
+            <div class="button-row essay-actions">
+              <a class="button button-primary" href="/en/start-here/">Continue in Order</a>
+              <a class="button button-secondary" href="/en/essays/">Back to the Archive</a>
+              <a class="button button-secondary" href="/en/support/">Support the Writing</a>
+            </div>
+          </footer>
+        </div>
+      </div>
+    </article>
+  </main>
+
+  <EnglishFooter />
+</Layout>
+
+<style>
+  .essay-shell {
+    padding-top: 2.5rem;
+  }
+
+  .essay-page {
+    display: grid;
+    gap: 2rem;
+  }
+
+  .essay-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.7fr) minmax(18rem, 0.9fr);
+    gap: 1.5rem;
+    padding: 1.9rem;
+    background:
+      linear-gradient(135deg, rgba(255, 252, 247, 0.96), rgba(247, 239, 226, 0.88)),
+      radial-gradient(circle at top right, rgba(155, 77, 34, 0.12), transparent 44%);
+  }
+
+  .essay-hero-main {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .hero-topline {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.8rem;
+  }
+
+  .essay-back {
+    color: var(--ink-muted);
+    font: 500 0.8rem/1 var(--font-mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .essay-back:hover {
+    color: var(--accent);
+  }
+
+  .lang-jump {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.42rem 0.8rem;
+    border-radius: 999px;
+    border: 1px solid rgba(23, 21, 18, 0.12);
+    color: var(--ink);
+    background: rgba(255, 252, 247, 0.68);
+    font: 500 0.74rem/1 var(--font-mono);
+    letter-spacing: 0.12em;
+    transition:
+      border-color 160ms ease,
+      background-color 160ms ease,
+      transform 160ms ease;
+  }
+
+  .lang-jump:hover {
+    transform: translateY(-1px);
+    border-color: rgba(155, 77, 34, 0.32);
+    background: rgba(255, 252, 247, 0.92);
+  }
+
+  .essay-meta-line {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin: 0;
+    color: var(--ink-muted);
+    font: 500 0.8rem/1 var(--font-mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .essay-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.34rem 0.7rem;
+    border-radius: 999px;
+    background: rgba(23, 21, 18, 0.08);
+    color: var(--ink);
+  }
+
+  .essay-pill-accent {
+    background: rgba(155, 77, 34, 0.12);
+    color: var(--accent);
+  }
+
+  .essay-title {
+    margin: 0;
+    max-width: 15ch;
+    font-family: var(--font-display);
+    font-size: clamp(2.8rem, 7vw, 5rem);
+    line-height: 1.03;
+    letter-spacing: -0.05em;
+  }
+
+  .essay-deck {
+    max-width: 42rem;
+    margin: 0;
+    color: var(--ink-muted);
+    font-size: clamp(1.06rem, 1.9vw, 1.28rem);
+    line-height: 1.95;
+  }
+
+  .essay-hero-note {
+    align-self: end;
+    padding: 1.2rem 1.15rem;
+    border-radius: 1.2rem;
+    background: rgba(255, 252, 247, 0.56);
+    border: 1px solid rgba(23, 21, 18, 0.08);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  }
+
+  .essay-hero-note p:last-child {
+    margin: 0;
+    color: var(--ink-muted);
+    line-height: 1.85;
+  }
+
+  .essay-stage {
+    display: grid;
+    grid-template-columns: minmax(13rem, 18rem) minmax(0, 1fr);
+    gap: 1.5rem;
+    align-items: start;
+  }
+
+  .essay-rail {
+    position: sticky;
+    top: 6.6rem;
+    display: grid;
+    gap: 1rem;
+  }
+
+  .rail-card {
+    padding: 1.2rem 1.1rem;
+  }
+
+  .rail-card h2 {
+    margin: 0 0 1rem;
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    line-height: 1.2;
+  }
+
+  .essay-toc {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.72rem;
+    color: var(--ink-muted);
+    line-height: 1.65;
+  }
+
+  .rail-quote p:last-child {
+    margin: 0;
+    color: var(--ink);
+    line-height: 1.9;
+  }
+
+  .essay-body {
+    padding: 2.2rem clamp(1.2rem, 4vw, 3rem) 2rem;
+    background: linear-gradient(180deg, rgba(255, 253, 249, 0.98), rgba(250, 246, 239, 0.94));
+  }
+
+  .essay-opening {
+    max-width: 46rem;
+    margin: 0 auto;
+    display: grid;
+    gap: 1rem;
+  }
+
+  .opening-paragraph {
+    margin: 0;
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-size: clamp(1.18rem, 1.9vw, 1.45rem);
+    line-height: 1.9;
+  }
+
+  .essay-divider {
+    width: 100%;
+    height: 1px;
+    margin: 2rem 0;
+    background: linear-gradient(90deg, transparent, rgba(23, 21, 18, 0.16), transparent);
+  }
+
+  .essay-prose {
+    max-width: 46rem;
+    margin: 0 auto;
+    font-size: 1.08rem;
+  }
+
+  .essay-prose > *:first-child {
+    margin-top: 0;
+  }
+
+  .essay-prose p {
+    margin: 1.1rem 0;
+    color: rgba(23, 21, 18, 0.82);
+    line-height: 1.95;
+    letter-spacing: 0.004em;
+  }
+
+  .essay-prose h2 {
+    position: relative;
+    margin: 3.2rem 0 1rem;
+    padding-top: 1.15rem;
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-size: clamp(1.65rem, 4vw, 2.4rem);
+    line-height: 1.18;
+    letter-spacing: -0.03em;
+  }
+
+  .essay-prose h2::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4.2rem;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), rgba(155, 77, 34, 0.2));
+  }
+
+  .essay-end {
+    max-width: 46rem;
+    margin: 0 auto;
+  }
+
+  .essay-end-note {
+    margin: 0;
+    color: var(--ink-muted);
+    font: 500 0.95rem/1.8 var(--font-mono);
+    letter-spacing: 0.04em;
+  }
+
+  .essay-actions {
+    margin-top: 1.25rem;
+  }
+
+  @media (max-width: 980px) {
+    .essay-hero,
+    .essay-stage {
+      grid-template-columns: 1fr;
+    }
+
+    .essay-rail {
+      position: static;
+      order: 2;
+    }
+  }
+
+  @media (max-width: 720px) {
+    .essay-shell {
+      padding-top: 1.6rem;
+    }
+
+    .essay-hero {
+      padding: 1.35rem;
+    }
+
+    .essay-body {
+      padding: 1.55rem 1.1rem 1.7rem;
+    }
+
+    .essay-prose {
+      font-size: 1.02rem;
+    }
+  }
+</style>

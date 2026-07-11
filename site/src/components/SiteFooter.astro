@@ -1,0 +1,89 @@
+---
+const contactEmail = "honjun@tju.edu.cn";
+const year = new Date().getFullYear();
+---
+
+<footer class="shell footer">
+  <div class="footer-statement">
+    <p>写作不是制造更多信息，<br />而是重新获得解释世界的能力。</p>
+  </div>
+
+  <div class="colophon">
+    <div>
+      <strong>Hong Jun</strong>
+      <span>身体 · 思想 · 生计</span>
+    </div>
+    <nav aria-label="页脚导航">
+      <a href="/subscribe/">订阅更新</a>
+      <a href="/support/">支持写作</a>
+      <a href={`mailto:${contactEmail}`}>写信</a>
+      <a href="/rss.xml">RSS</a>
+    </nav>
+    <p>© {year} · 长期写作，缓慢出版</p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    padding: clamp(3rem, 7vw, 6rem) 0 2rem;
+    border-top: 3px solid var(--ink);
+  }
+
+  .footer-statement {
+    padding-bottom: clamp(3rem, 8vw, 6rem);
+  }
+
+  .footer-statement p {
+    max-width: 15em;
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 4.3rem);
+    line-height: 1.2;
+  }
+
+  .colophon {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 2rem;
+    align-items: end;
+    padding-top: 1rem;
+    border-top: 1px solid var(--line-dark);
+    color: var(--ink-muted);
+    font-size: 0.78rem;
+  }
+
+  .colophon div {
+    display: grid;
+    gap: 0.25rem;
+  }
+
+  .colophon strong {
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 400;
+  }
+
+  .colophon nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .colophon a:hover {
+    color: var(--accent);
+  }
+
+  .colophon p {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+  }
+
+  @media (max-width: 760px) {
+    .colophon {
+      grid-template-columns: 1fr;
+      align-items: start;
+    }
+  }
+</style>

@@ -1,0 +1,281 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import EnglishHeader from "../../components/EnglishHeader.astro";
+import EnglishFooter from "../../components/EnglishFooter.astro";
+import EssayCard from "../../components/EssayCard.astro";
+import { getChineseSlugFromEnglish } from "../../data/essayLinks";
+import { englishEssays, englishSiteMeta, englishStartHere } from "../../data/english";
+
+const remainingEssays = englishEssays.filter((essay) => !essay.featured).sort((a, b) => a.order - b.order);
+const methodBridge = englishEssays.find(
+  (essay) => essay.slug === "why-the-simplest-principles-are-often-closest-to-reality",
+);
+---
+
+<Layout title={`Start Here | ${englishSiteMeta.title}`} description="A guided English reading path into the main problem, deeper explanations, and practical layers of this website.">
+  <EnglishHeader />
+
+  <main class="shell section">
+    <section class="start-hero card">
+      <div class="start-copy">
+        <p class="kicker">Start Here</p>
+        <h1 class="page-title">Do not try to read everything at once.</h1>
+        <p class="lede">
+          Anxiety is often not just emotion. It is a loss of coordinates.
+          So the reading order here is not tricks first. It is coordinates first:
+          the main problem, then age, system, and history, and only then the beams
+          that land on a real life.
+        </p>
+      </div>
+
+      <aside class="start-summary">
+        <div class="summary-card">
+          <span>01</span>
+          <p>First define the main problem: how people slowly lose themselves inside systems.</p>
+        </div>
+        <div class="summary-card">
+          <span>02</span>
+          <p>Then recover coordinates: what age you live in, what line of history you stand inside, and what base is actually beneath your feet.</p>
+        </div>
+        <div class="summary-card">
+          <span>03</span>
+          <p>Only then press back into reality: body and thought as roots, livelihood as protection, trust and cooperation as amplification.</p>
+        </div>
+      </aside>
+    </section>
+
+    <section class="route">
+      {
+        englishStartHere.map((item, index) => (
+          <article class="card panel route-card">
+            <span>{String(index + 1).padStart(2, "0")}</span>
+            <div class="route-main">
+              <p class="route-role">{item.role}</p>
+              <h2>{item.title}</h2>
+              <p>{item.why}</p>
+            </div>
+            <a href={`/en/essays/${item.slug}/`}>Read</a>
+          </article>
+        ))
+      }
+    </section>
+
+    {
+      remainingEssays.length > 0 && (
+        <section class="next-step">
+          <div class="section-head">
+            <div>
+              <p class="kicker">After The Foundations</p>
+              <h2>Once the frame is clear, return to the layers that shape a life.</h2>
+            </div>
+            <p class="section-copy">
+              The extended essays are not random extras. They are the layers that make the
+              framework concrete. Once the larger explanations are clear, return to the
+              pressure point that actually weakens your life: mind, body, method, livelihood,
+              or trust. First get the person to stand again. Then talk about how cooperation can
+              enlarge what one person alone cannot do.
+            </p>
+          </div>
+
+          {
+            methodBridge && (
+              <a class="bridge-card card" href={`/en/essays/${methodBridge.slug}/`}>
+                <div class="bridge-meta">
+                  <span>Method Bridge</span>
+                  <time>{methodBridge.publishedAt}</time>
+                </div>
+                <div class="bridge-copy">
+                  <h3>If you want a ruler for how to think before you read further</h3>
+                  <p>
+                    This is not another foundation essay and not a random extra. It is the
+                    methodological bridge that ties the tree model, first principles, the
+                    Feynman technique, and continuous rebuilding back to one line.
+                  </p>
+                </div>
+                <strong>Read the bridge</strong>
+              </a>
+            )
+          }
+
+          <div class="next-grid">
+            {
+              remainingEssays.map((essay) => (
+                <EssayCard
+                  href={`/en/essays/${essay.slug}/`}
+                  title={essay.title}
+                  description={essay.description}
+                  publishedAt={essay.publishedAt}
+                  category={essay.category}
+                  ctaLabel="Read Essay"
+                  languageNote={getChineseSlugFromEnglish(essay.slug) ? "Chinese Original" : undefined}
+                />
+              ))
+            }
+          </div>
+        </section>
+      )
+    }
+  </main>
+
+  <EnglishFooter />
+</Layout>
+
+<style>
+  .start-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(18rem, 0.78fr);
+    gap: 1.5rem;
+    padding: 1.6rem;
+    background:
+      radial-gradient(circle at top right, rgba(155, 77, 34, 0.08), transparent 30%),
+      linear-gradient(180deg, rgba(255, 252, 247, 0.98), rgba(247, 241, 231, 0.9));
+  }
+
+  .start-summary,
+  .summary-card,
+  .route {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .summary-card {
+    padding: 1rem 1.1rem;
+    border: 1px solid rgba(23, 21, 18, 0.08);
+    border-radius: var(--radius-md);
+    background: rgba(255, 252, 247, 0.7);
+  }
+
+  .summary-card span,
+  .route-card span {
+    color: var(--accent);
+    font: 500 0.8rem/1 var(--font-mono);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .summary-card p,
+  .route-card p,
+  .section-copy {
+    margin: 0;
+    color: var(--ink-muted);
+    line-height: 1.85;
+  }
+
+  .route-card {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .route-main {
+    display: grid;
+    gap: 0.45rem;
+  }
+
+  .route-role {
+    margin: 0;
+    color: var(--accent);
+    font: 500 0.76rem/1 var(--font-mono);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .route-card h2,
+  .next-step h2 {
+    margin: 0;
+    font-family: var(--font-display);
+  }
+
+  .route-card h2 {
+    font-size: clamp(1.35rem, 3vw, 1.8rem);
+    line-height: 1.2;
+  }
+
+  .route-card a {
+    color: var(--accent);
+    font: 600 0.8rem/1 var(--font-mono);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .next-step {
+    margin-top: 2rem;
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  .bridge-card {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 1rem;
+    align-items: center;
+    padding: 1.2rem;
+    border-color: rgba(155, 77, 34, 0.24);
+    background:
+      radial-gradient(circle at top right, rgba(155, 77, 34, 0.08), transparent 30%),
+      linear-gradient(180deg, rgba(255, 252, 247, 0.98), rgba(247, 241, 231, 0.92));
+  }
+
+  .bridge-meta {
+    display: grid;
+    gap: 0.3rem;
+    color: var(--accent);
+    font: 500 0.78rem/1.2 var(--font-mono);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .bridge-copy {
+    display: grid;
+    gap: 0.45rem;
+  }
+
+  .bridge-copy h3 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.15rem, 2.2vw, 1.45rem);
+  }
+
+  .bridge-copy p {
+    margin: 0;
+    color: var(--ink-muted);
+    line-height: 1.85;
+  }
+
+  .bridge-card strong {
+    color: var(--accent);
+    font: 600 0.8rem/1 var(--font-mono);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .section-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(18rem, 0.78fr);
+    gap: 1.25rem;
+    align-items: end;
+  }
+
+  .next-step h2 {
+    font-size: clamp(1.9rem, 3.4vw, 2.7rem);
+    line-height: 1.1;
+  }
+
+  .next-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.1rem;
+  }
+
+  @media (max-width: 960px) {
+    .start-hero,
+    .section-head,
+    .route-card,
+    .next-grid,
+    .bridge-card {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,454 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import EnglishHeader from "../../components/EnglishHeader.astro";
+import EnglishFooter from "../../components/EnglishFooter.astro";
+import EssayCard from "../../components/EssayCard.astro";
+import { getChineseSlugFromEnglish } from "../../data/essayLinks";
+import {
+  englishEssays,
+  englishPillars,
+  englishSiteMeta,
+  englishStartHere,
+} from "../../data/english";
+
+const featuredEssays = englishEssays.filter((essay) => essay.featured).sort((a, b) => a.order - b.order);
+const methodBridge = englishEssays.find(
+  (essay) => essay.slug === "why-the-simplest-principles-are-often-closest-to-reality",
+);
+---
+
+<Layout title={`English | ${englishSiteMeta.title}`} description={englishSiteMeta.description}>
+  <EnglishHeader />
+
+  <main class="shell section">
+    <section class="hero-stage card">
+      <div class="hero-copy">
+        <p class="kicker">English Edition</p>
+        <h1 class="display">Personal sovereignty in the age of AI.</h1>
+        <p class="lede">
+          This site answers one question: how does a person avoid being hollowed out
+          in the age of AI and become someone who can stand again?
+        </p>
+
+        <div class="button-row">
+          <a class="button button-primary" href="/en/start-here/">Start Here</a>
+          <a class="button button-secondary" href="/en/about/">About This Project</a>
+        </div>
+      </div>
+
+      <aside class="hero-note">
+        <p class="eyebrow">Core Direction</p>
+        <ul>
+          <li>First the main problem: why a person slowly loses himself.</li>
+          <li>Then the larger explanations: age, system, and history.</li>
+          <li>Then the return: body and thought as roots, livelihood as protection.</li>
+        </ul>
+      </aside>
+    </section>
+
+    <section class="read-path card panel">
+      <div class="section-head">
+        <div>
+          <p class="kicker">Reading Path</p>
+          <h2>Read the foundations first. Then go deeper by pressure point.</h2>
+        </div>
+        <p class="section-copy">
+          First see the problem, then recover coordinates, and only then decide which layer you need to reclaim first.
+        </p>
+      </div>
+
+      <div class="route-grid">
+        {
+          englishStartHere.map((item, index) => (
+            <article class="route-card">
+              <span>{String(index + 1).padStart(2, "0")}</span>
+              <div>
+                <p class="route-role">{item.role}</p>
+                <h3>{item.title}</h3>
+                <p>{item.why}</p>
+              </div>
+              <a href={`/en/essays/${item.slug}/`}>Read</a>
+            </article>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="logic-tree card panel">
+      <div class="section-head">
+        <div>
+          <p class="kicker">Logic Tree</p>
+          <h2>See the line first. Then each essay falls into place.</h2>
+        </div>
+        <p class="section-copy">
+          The order is not a stack of parallel ideas. First see the problem, then
+          recover coordinates, and only then return to the person: body and thought
+          as roots, livelihood as protection, trust and cooperation as amplification.
+        </p>
+      </div>
+
+      <div class="logic-board">
+        <article class="logic-node logic-root">
+          <span>Root</span>
+          <h3>Personal Sovereignty</h3>
+          <p>The main problem: how an ordinary person becomes the owner of his life again.</p>
+        </article>
+
+        <div class="logic-core">
+          <article class="logic-node">
+            <span>Body</span>
+            <h3>The Body Is Not A Tool</h3>
+            <p>The body is a root. A person has to stand before he can judge, endure, or act well.</p>
+          </article>
+
+          <article class="logic-node">
+            <span>Mind</span>
+            <h3>AI Is Fire, Laozi Is Water</h3>
+            <p>Thought is also a root. This essay is really about how to keep inner order in a burning age.</p>
+          </article>
+        </div>
+
+        <div class="logic-row">
+          <article class="logic-node logic-wide">
+            <span>Livelihood</span>
+            <h3>Why Independent Livelihood Is The Precondition For Spiritual Freedom</h3>
+            <p>Livelihood is not the root. It is the moat that protects body and thought from being cut off by reality.</p>
+          </article>
+        </div>
+
+        <div class="logic-row">
+          <article class="logic-node logic-wide">
+            <span>Trust & Cooperation</span>
+            <h3>Trust Is An Invisible Resource</h3>
+            <p>Trust is not thought itself. It is the amplifier that makes cooperation, business, and larger undertakings possible.</p>
+          </article>
+        </div>
+
+        <div class="logic-deeper">
+          <article class="logic-node logic-subtle">
+            <span>System</span>
+            <h3>Thoughts On Historical Cycles</h3>
+            <p>If you want the wider structure, this essay explains why systems grow heavy, rigid, and self-consuming.</p>
+          </article>
+
+          <article class="logic-node logic-subtle">
+            <span>History</span>
+            <h3>People And Heroes</h3>
+            <p>If you want the deeper base, this essay explains who actually moves history beneath the surface stage.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    {
+      methodBridge && (
+        <section class="method-bridge card panel">
+          <div class="section-head">
+            <div>
+              <p class="kicker">Method Bridge</p>
+              <h2>A ruler for how to think before everything gets more complex.</h2>
+            </div>
+            <p class="section-copy">
+              This essay ties the tree model, first principles, the Feynman technique,
+              and continuous rebuilding back to one line: real methods always force you
+              toward the simplest truth that reality will not let you fake.
+            </p>
+          </div>
+
+          <div class="bridge-panel">
+            <div class="bridge-copy">
+              <p class="bridge-label">Why this matters</p>
+              <h3>{methodBridge.title}</h3>
+              <p>{methodBridge.description}</p>
+            </div>
+            <div class="bridge-actions">
+              <a class="button button-primary" href={`/en/essays/${methodBridge.slug}/`}>Read The Bridge</a>
+              {
+                getChineseSlugFromEnglish(methodBridge.slug) && (
+                  <a class="button button-secondary" href={`/essays/${getChineseSlugFromEnglish(methodBridge.slug)}/`}>
+                    Chinese Original
+                  </a>
+                )
+              }
+            </div>
+          </div>
+        </section>
+      )
+    }
+
+    <section class="pillars">
+      {
+        englishPillars.map((pillar) => (
+          <article class="card panel pillar-card">
+            <p class="kicker">{pillar.title}</p>
+            <p>{pillar.body}</p>
+          </article>
+        ))
+      }
+    </section>
+
+    <section class="featured">
+      <div class="section-head">
+        <div>
+          <p class="kicker">Foundational Essays</p>
+          <h2>The English core, translated as a real reading path.</h2>
+        </div>
+      </div>
+
+      <div class="essay-list">
+        {
+          featuredEssays.map((essay) => (
+            <EssayCard
+              href={`/en/essays/${essay.slug}/`}
+              title={essay.title}
+              description={essay.description}
+              publishedAt={essay.publishedAt}
+              category={essay.category}
+              ctaLabel="Read Essay"
+              languageNote={getChineseSlugFromEnglish(essay.slug) ? "Chinese Original" : undefined}
+            />
+          ))
+        }
+      </div>
+    </section>
+  </main>
+
+  <EnglishFooter />
+</Layout>
+
+<style>
+  .hero-stage {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(18rem, 0.82fr);
+    gap: 1.5rem;
+    padding: 1.7rem;
+    background:
+      radial-gradient(circle at top right, rgba(155, 77, 34, 0.08), transparent 32%),
+      linear-gradient(180deg, rgba(255, 252, 247, 0.98), rgba(247, 241, 231, 0.9));
+  }
+
+  .hero-copy,
+  .hero-note,
+  .pillars,
+  .featured,
+  .method-bridge,
+  .logic-tree,
+  .logic-board,
+  .logic-branches,
+  .logic-ground {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .hero-note {
+    align-content: start;
+    padding: 1.2rem;
+    border-radius: 1.2rem;
+    background: rgba(255, 252, 247, 0.64);
+    border: 1px solid rgba(23, 21, 18, 0.08);
+  }
+
+  .hero-note p:last-of-type,
+  .hero-note li,
+  .section-copy,
+  .route-card p,
+  .pillar-card p {
+    margin: 0;
+    color: var(--ink-muted);
+    line-height: 1.85;
+  }
+
+  .hero-note ul {
+    margin: 0;
+    padding-left: 1.2rem;
+    display: grid;
+    gap: 0.45rem;
+  }
+
+  .section-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(18rem, 0.82fr);
+    gap: 1.25rem;
+    align-items: end;
+  }
+
+  .section-head h2,
+  .route-card h3 {
+    margin: 0;
+    font-family: var(--font-display);
+  }
+
+  .section-head h2 {
+    font-size: clamp(1.9rem, 3.4vw, 2.7rem);
+    line-height: 1.08;
+  }
+
+  .route-grid {
+    display: grid;
+    gap: 0.95rem;
+  }
+
+  .route-card {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 1rem;
+    align-items: center;
+    padding: 1rem 0;
+    border-top: 1px solid rgba(23, 21, 18, 0.08);
+  }
+
+  .route-card:first-child {
+    border-top: 0;
+    padding-top: 0;
+  }
+
+  .route-card span,
+  .route-card a {
+    color: var(--accent);
+    font: 500 0.8rem/1 var(--font-mono);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .route-role {
+    margin: 0 0 0.3rem;
+    color: var(--accent);
+    font: 500 0.76rem/1 var(--font-mono);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .route-card h3 {
+    font-size: 1.35rem;
+    line-height: 1.25;
+  }
+
+  .pillars {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin-top: 2rem;
+  }
+
+  .logic-root {
+    max-width: 36rem;
+  }
+
+  .logic-core,
+  .logic-deeper {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .logic-row {
+    display: grid;
+    justify-items: center;
+  }
+
+  .bridge-panel {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 1.25rem;
+    align-items: end;
+    padding: 1.25rem;
+    border: 1px solid rgba(23, 21, 18, 0.08);
+    border-radius: var(--radius-md);
+    background:
+      radial-gradient(circle at top right, rgba(155, 77, 34, 0.08), transparent 30%),
+      linear-gradient(180deg, rgba(255, 252, 247, 0.98), rgba(247, 241, 231, 0.9));
+  }
+
+  .bridge-copy {
+    display: grid;
+    gap: 0.55rem;
+  }
+
+  .bridge-label {
+    margin: 0;
+    color: var(--accent);
+    font: 500 0.76rem/1 var(--font-mono);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .bridge-copy h3,
+  .bridge-copy p {
+    margin: 0;
+  }
+
+  .bridge-copy h3 {
+    font-family: var(--font-display);
+    font-size: clamp(1.35rem, 2.8vw, 1.9rem);
+    line-height: 1.15;
+  }
+
+  .bridge-copy p:last-child {
+    color: var(--ink-muted);
+    line-height: 1.85;
+  }
+
+  .bridge-actions {
+    display: grid;
+    gap: 0.8rem;
+    justify-items: start;
+  }
+
+  .logic-node {
+    display: grid;
+    gap: 0.55rem;
+    padding: 1rem 1.1rem;
+    border: 1px solid rgba(23, 21, 18, 0.08);
+    border-radius: var(--radius-md);
+    background: rgba(255, 252, 247, 0.72);
+  }
+
+  .logic-node span {
+    color: var(--accent);
+    font: 500 0.76rem/1 var(--font-mono);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .logic-node h3,
+  .logic-node p {
+    margin: 0;
+  }
+
+  .logic-node h3 {
+    font-family: var(--font-display);
+    font-size: 1.24rem;
+    line-height: 1.2;
+  }
+
+  .logic-node p {
+    color: var(--ink-muted);
+    line-height: 1.8;
+  }
+
+  .logic-wide {
+    width: min(100%, 42rem);
+  }
+
+  .logic-subtle {
+    background: rgba(255, 252, 247, 0.5);
+    border-style: dashed;
+  }
+
+  .essay-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+
+  @media (max-width: 960px) {
+    .hero-stage,
+    .section-head,
+    .essay-list,
+    .pillars,
+    .logic-core,
+    .logic-deeper,
+    .route-card,
+    .bridge-panel {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

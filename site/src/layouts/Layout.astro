@@ -1,0 +1,246 @@
+---
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  ogType?: string;
+  noindex?: boolean;
+  structuredData?: Record<string, unknown> | Record<string, unknown>[];
+  lang?: string;
+}
+
+const {
+  title = "Hong Jun",
+  description = "Hong Jun writes about rebuilding body, judgment, and livelihood in the age of AI.",
+  image,
+  ogType = "website",
+  noindex = false,
+  structuredData,
+  lang = "zh-CN",
+} = Astro.props;
+
+const siteUrl = Astro.site ?? new URL("https://www.thehongjun.com");
+const canonical = new URL(Astro.url.pathname, siteUrl).toString();
+const robots = noindex ? "noindex, nofollow" : "index, follow";
+const imageUrl = image ? new URL(image, siteUrl).toString() : undefined;
+const schema = structuredData ? JSON.stringify(structuredData) : undefined;
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="canonical" href={canonical} />
+    <meta name="description" content={description} />
+    <meta name="robots" content={robots} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:url" content={canonical} />
+    {imageUrl && <meta property="og:image" content={imageUrl} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    {imageUrl && <meta name="twitter:image" content={imageUrl} />}
+    <title>{title}</title>
+    {schema && <script type="application/ld+json" set:html={schema}></script>}
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;600&family=Noto+Serif+SC:wght@400;600;700;900&family=ZCOOL+XiaoWei&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    --paper: #f3efe6;
+    --paper-deep: #e8e1d4;
+    --paper-light: #f9f6ef;
+    --ink: #191816;
+    --ink-soft: #34312c;
+    --ink-muted: #716b62;
+    --line: #c9c0b2;
+    --line-dark: #8d8478;
+    --accent: #8f321f;
+    --accent-dark: #672317;
+    --max-width: 1200px;
+    --reading-width: 45rem;
+    --font-display: "ZCOOL XiaoWei", "Noto Serif SC", serif;
+    --font-serif: "Noto Serif SC", serif;
+    --font-body: "Noto Sans SC", sans-serif;
+    --font-mono: "IBM Plex Mono", monospace;
+    --radius-md: 0;
+    --shadow: none;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-body);
+    text-rendering: optimizeLegibility;
+    line-break: loose;
+  }
+
+  body::selection,
+  body *::selection {
+    color: var(--paper-light);
+    background: var(--accent);
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  a:focus-visible,
+  button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
+  }
+
+  img {
+    display: block;
+    max-width: 100%;
+  }
+
+  .shell {
+    width: min(calc(100% - 3rem), var(--max-width));
+    margin: 0 auto;
+  }
+
+  .section {
+    padding: clamp(2.5rem, 6vw, 5rem) 0 clamp(4rem, 8vw, 7rem);
+  }
+
+  .eyebrow,
+  .kicker {
+    margin: 0 0 0.85rem;
+    color: var(--accent);
+    font: 500 0.7rem/1 var(--font-mono);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .display,
+  .page-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 400;
+    text-wrap: balance;
+  }
+
+  .display {
+    font-size: clamp(3.4rem, 9vw, 7.8rem);
+    line-height: 0.98;
+    letter-spacing: -0.045em;
+  }
+
+  .page-title {
+    font-size: clamp(2.7rem, 6vw, 5rem);
+    line-height: 1.08;
+    letter-spacing: -0.035em;
+  }
+
+  .lede {
+    max-width: 46rem;
+    font-family: var(--font-serif);
+    font-size: clamp(1.05rem, 2vw, 1.3rem);
+    line-height: 1.95;
+    color: var(--ink-soft);
+  }
+
+  .page-intro {
+    display: grid;
+    gap: 1rem;
+    margin-bottom: clamp(2.5rem, 6vw, 5rem);
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--line-dark);
+  }
+
+  .card {
+    background: transparent !important;
+    border: 1px solid var(--line);
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+  }
+
+  .panel {
+    padding: 1.5rem;
+  }
+
+  .button-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 2rem;
+  }
+
+  .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 9.5rem;
+    padding: 0.82rem 1.15rem;
+    border: 1px solid var(--ink);
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: color 160ms ease, background-color 160ms ease;
+  }
+
+  .button:hover {
+    color: var(--paper-light);
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .button-primary {
+    background: var(--ink);
+    color: var(--paper-light);
+  }
+
+  .button-secondary {
+    background: transparent;
+  }
+
+  @media (max-width: 640px) {
+    .shell {
+      width: min(calc(100% - 1.5rem), var(--max-width));
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+</style>

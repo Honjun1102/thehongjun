@@ -1,0 +1,634 @@
+---
+import fs from "node:fs";
+import Layout from "../layouts/Layout.astro";
+import SiteHeader from "./SiteHeader.astro";
+import SiteFooter from "./SiteFooter.astro";
+import { siteMeta } from "../data/site";
+import { buildHeadingMeta, parseMarkdown, type HeadingBlock } from "../utils/bookReader";
+
+interface Props {
+  sourcePath?: string;
+  markdownSource?: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  heroLede: string;
+  heroNote: string;
+  quote: string;
+  pdfHref: string;
+  readerHint?: string;
+}
+
+const {
+  sourcePath,
+  markdownSource,
+  title,
+  subtitle,
+  description,
+  heroLede,
+  heroNote,
+  quote,
+  pdfHref,
+  readerHint = "想直接进主线的人",
+} = Astro.props;
+
+const markdown = (
+  markdownSource ?? fs.readFileSync(sourcePath!, "utf8")
+).replace(/\r\n/g, "\n");
+const blocks = parseMarkdown(markdown);
+const toc = blocks.filter(
+  (block): block is HeadingBlock => block.type === "h1" || block.type === "h2",
+);
+
+function isPrefaceHeading(text: string) {
+  return /^(序言|导论)[:：]?\s*/.test(text.trim());
+}
+
+const chapterCount = blocks.filter(
+  (block) => block.type === "h1" && !isPrefaceHeading(block.text),
+).length;
+
+const headingMeta = buildHeadingMeta(blocks, isPrefaceHeading);
+---
+
+<Layout title={`${title} | ${siteMeta.title}`} description={description}>
+  <SiteHeader />
+
+  <main class="shell section book-page">
+    <section class="card book-hero">
+      <div class="book-copy">
+        <div class="cover-head">
+          <p class="eyebrow">书稿</p>
+          <p class="cover-kicker">站内全文阅读</p>
+        </div>
+        <div class="title-block">
+          <h1 class="page-title">{title}</h1>
+          <p class="book-subtitle">{subtitle}</p>
+        </div>
+        <p class="lede">{heroLede}</p>
+        <p class="hero-note">{heroNote}</p>
+        <div class="book-meta" aria-label="阅读提示">
+          <div class="meta-row">
+            <span>阅读方式</span>
+            <strong>站内全文</strong>
+          </div>
+          <div class="meta-row">
+            <span>当前长度</span>
+            <strong>{chapterCount} 章书稿</strong>
+          </div>
+          <div class="meta-row">
+            <span>最适合谁</span>
+            <strong>{readerHint}</strong>
+          </div>
+        </div>
+        <div class="button-row">
+          <a class="button button-primary" href="#reader">直接开始阅读</a>
+          <a class="button button-secondary" href="#toc">先看目录</a>
+          <a class="button button-secondary" href={pdfHref} download>
+            下载 PDF
+          </a>
+        </div>
+      </div>
+
+      <aside class="card panel pull-quote">
+        <p class="eyebrow">封面题签</p>
+        <p>{quote}</p>
+        <div class="cover-mark">
+          <span>ZH</span>
+          <span>{chapterCount} CH</span>
+        </div>
+      </aside>
+    </section>
+
+    <section class="content-grid">
+      <details class="card panel mobile-toc">
+        <summary class="mobile-toc-toggle">
+          <span class="eyebrow">目录</span>
+          <strong>先看结构，再决定从哪里下刀</strong>
+        </summary>
+
+        <nav class="toc-list mobile-toc-list" aria-label="书稿目录">
+          {
+            toc.map((item) => (
+              <a
+                class:list={[
+                  "toc-link",
+                  item.type === "h1" ? "toc-link-major" : "toc-link-minor",
+                ]}
+                data-toc-link
+                href={`#${item.id}`}
+              >
+                {headingMeta.get(item.id)?.label && (
+                  <span class="toc-number">{headingMeta.get(item.id)?.label}</span>
+                )}
+                {item.text}
+              </a>
+            ))
+          }
+        </nav>
+      </details>
+
+      <aside class="card panel toc-card" id="toc">
+        <div class="toc-head">
+          <p class="eyebrow">目录</p>
+          <p class="toc-copy">先看结构，再决定从哪里下刀。目录会跟着你一起往下走。</p>
+        </div>
+
+        <nav class="toc-list" aria-label="书稿目录">
+          {
+            toc.map((item) => (
+              <a
+                class:list={[
+                  "toc-link",
+                  item.type === "h1" ? "toc-link-major" : "toc-link-minor",
+                ]}
+                data-toc-link
+                href={`#${item.id}`}
+              >
+                {headingMeta.get(item.id)?.label && (
+                  <span class="toc-number">{headingMeta.get(item.id)?.label}</span>
+                )}
+                {item.text}
+              </a>
+            ))
+          }
+        </nav>
+      </aside>
+
+      <article class="card panel reader" id="reader">
+        <div class="reader-flow">
+          {
+            blocks.map((block) => {
+              if (block.type === "h1") {
+                return (
+                  <section class="reader-section" id={block.id}>
+                    {headingMeta.get(block.id)?.label && (
+                      <p class="reader-chapter-kicker">{headingMeta.get(block.id)?.label}</p>
+                    )}
+                    <h2 class="reader-h1">{block.text}</h2>
+                  </section>
+                );
+              }
+
+              if (block.type === "h2") {
+                return (
+                  <div class="reader-subsection" id={block.id}>
+                    {headingMeta.get(block.id)?.label && (
+                      <p class="reader-sub-kicker">{headingMeta.get(block.id)?.label}</p>
+                    )}
+                    <h3 class="reader-h2">{block.text}</h3>
+                  </div>
+                );
+              }
+
+              if (block.type === "h3") {
+                return <h4 class="reader-h3" id={block.id}>{block.text}</h4>;
+              }
+
+              if (block.type === "p") {
+                return <p class="reader-p" set:html={block.html} />;
+              }
+
+              if (block.type === "ul") {
+                return (
+                  <ul class="reader-list">
+                    {block.items.map((item) => <li set:html={item} />)}
+                  </ul>
+                );
+              }
+
+              return (
+                <ol class="reader-list reader-list-ordered">
+                  {block.items.map((item) => <li set:html={item} />)}
+                </ol>
+              );
+            })
+          }
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <SiteFooter />
+
+  <script is:inline>
+    (() => {
+      const links = Array.from(
+        document.querySelectorAll("[data-toc-link]"),
+      );
+
+      const sections = links
+        .map((link) => {
+          const id = link.getAttribute("href")?.slice(1);
+          if (!id) return null;
+          const section = document.getElementById(id);
+          if (!section) return null;
+          return { link, section };
+        })
+        .filter(Boolean);
+
+      if (!sections.length) return;
+
+      const activate = (id) => {
+        sections.forEach(({ link, section }) => {
+          const isActive = section.id === id;
+          link.classList.toggle("is-active", isActive);
+          if (isActive) {
+            link.setAttribute("aria-current", "true");
+          } else {
+            link.removeAttribute("aria-current");
+          }
+        });
+      };
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          const visible = entries
+            .filter((entry) => entry.isIntersecting)
+            .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+
+          if (visible.length) {
+            activate(visible[0].target.id);
+          }
+        },
+        {
+          rootMargin: "-18% 0px -62% 0px",
+          threshold: [0.1, 0.25, 0.5, 0.75],
+        },
+      );
+
+      sections.forEach(({ section }) => observer.observe(section));
+
+      const currentHash = window.location.hash.slice(1);
+      if (currentHash) {
+        activate(currentHash);
+      } else {
+        activate(sections[0].section.id);
+      }
+    })();
+  </script>
+</Layout>
+
+<style>
+  .book-page {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .book-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(16rem, 0.72fr);
+    gap: 1.25rem;
+    padding: clamp(1.4rem, 3vw, 2rem);
+    align-items: start;
+  }
+
+  .book-copy,
+  .pull-quote {
+    display: grid;
+    gap: 0.9rem;
+  }
+
+  .book-subtitle,
+  .pull-quote p,
+  .book-copy p {
+    margin: 0;
+  }
+
+  .cover-head {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .cover-kicker {
+    color: var(--ink-muted);
+    font: 500 0.76rem/1 var(--font-mono);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .title-block {
+    display: grid;
+    gap: 0.5rem;
+    padding: 0.2rem 0 0.95rem;
+    border-bottom: 1px solid rgba(23, 21, 18, 0.12);
+  }
+
+  .book-subtitle {
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-size: clamp(1.18rem, 2.2vw, 1.5rem);
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+    max-width: 24rem;
+  }
+
+  .lede,
+  .hero-note {
+    max-width: 38rem;
+  }
+
+  .hero-note {
+    color: var(--ink-muted);
+    line-height: 1.85;
+  }
+
+  .book-meta {
+    display: grid;
+    gap: 0.45rem;
+    margin-top: 0.2rem;
+    padding: 1rem 1.1rem;
+    border-radius: 1.05rem;
+    border: 1px solid rgba(23, 21, 18, 0.08);
+    background: linear-gradient(180deg, rgba(255, 252, 247, 0.84), rgba(246, 240, 228, 0.68));
+  }
+
+  .meta-row {
+    display: grid;
+    grid-template-columns: minmax(5.5rem, 6.8rem) minmax(0, 1fr);
+    gap: 0.9rem;
+    align-items: start;
+  }
+
+  .meta-row span {
+    color: var(--ink-muted);
+    font: 500 0.72rem/1 var(--font-mono);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .meta-row strong {
+    font-size: 0.98rem;
+    line-height: 1.55;
+  }
+
+  .pull-quote {
+    align-content: start;
+    align-self: start;
+    gap: 0.85rem;
+    background:
+      linear-gradient(180deg, rgba(251, 248, 242, 0.92), rgba(245, 237, 222, 0.82)),
+      radial-gradient(circle at top right, rgba(155, 77, 34, 0.08), transparent 40%);
+  }
+
+  .pull-quote p:last-child {
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-size: clamp(1.35rem, 2.8vw, 2rem);
+    line-height: 1.35;
+  }
+
+  .cover-mark {
+    display: flex;
+    justify-content: flex-start;
+    gap: 0.75rem;
+    padding-top: 0.35rem;
+    color: var(--ink-muted);
+    font: 500 0.74rem/1 var(--font-mono);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .content-grid {
+    display: grid;
+    grid-template-columns: minmax(16rem, 19rem) minmax(0, 1fr);
+    gap: 1.25rem;
+    align-items: start;
+  }
+
+  .mobile-toc {
+    display: none;
+  }
+
+  .mobile-toc-toggle {
+    display: grid;
+    gap: 0.25rem;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .mobile-toc-toggle::-webkit-details-marker {
+    display: none;
+  }
+
+  .mobile-toc-toggle strong {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    line-height: 1.35;
+  }
+
+  .mobile-toc-list {
+    margin-top: 1rem;
+  }
+
+  .toc-card {
+    position: sticky;
+    top: 6rem;
+    display: grid;
+    gap: 1rem;
+    max-height: calc(100vh - 7.5rem);
+    overflow: auto;
+  }
+
+  .toc-head {
+    display: grid;
+    gap: 0.45rem;
+  }
+
+  .toc-head p {
+    margin: 0;
+  }
+
+  .toc-copy {
+    color: var(--ink-muted);
+    line-height: 1.7;
+  }
+
+  .toc-list {
+    display: grid;
+    gap: 0.55rem;
+  }
+
+  .toc-link {
+    display: grid;
+    gap: 0.18rem;
+    color: var(--ink-muted);
+    line-height: 1.5;
+    transition: color 160ms ease, transform 160ms ease;
+  }
+
+  .toc-link:hover {
+    color: var(--ink);
+    transform: translateX(2px);
+  }
+
+  .toc-link.is-active {
+    color: var(--ink);
+  }
+
+  .toc-link-major {
+    font-family: var(--font-display);
+    font-size: 1.02rem;
+    color: var(--ink);
+  }
+
+  .toc-number {
+    color: var(--accent);
+    font: 500 0.68rem/1 var(--font-mono);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .toc-link-major.is-active {
+    text-decoration: underline;
+    text-decoration-color: rgba(155, 77, 34, 0.55);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.28rem;
+  }
+
+  .toc-link-minor {
+    padding-left: 0.85rem;
+    border-left: 1px solid rgba(23, 21, 18, 0.1);
+    font-size: 0.95rem;
+  }
+
+  .toc-link-minor.is-active {
+    border-left-color: rgba(155, 77, 34, 0.42);
+  }
+
+  .reader {
+    display: grid;
+    gap: 0;
+    padding: clamp(1.35rem, 3vw, 2.2rem);
+  }
+
+  .reader-flow {
+    width: min(100%, 46rem);
+    margin: 0 auto;
+    display: grid;
+    gap: 1rem;
+  }
+
+  .reader-section {
+    margin-top: 0.9rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(23, 21, 18, 0.08);
+    scroll-margin-top: 6.5rem;
+  }
+
+  .reader-section:first-child {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+  }
+
+  .reader-h1,
+  .reader-h2,
+  .reader-h3 {
+    margin: 0;
+    font-family: var(--font-display);
+    line-height: 1.18;
+    scroll-margin-top: 6.5rem;
+  }
+
+  .reader-h1 {
+    font-size: clamp(2rem, 4vw, 3rem);
+  }
+
+  .reader-chapter-kicker,
+  .reader-sub-kicker {
+    margin: 0 0 0.5rem;
+    color: var(--accent);
+    font: 500 0.72rem/1 var(--font-mono);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .reader-subsection {
+    margin-top: 2.1rem;
+    scroll-margin-top: 6.5rem;
+  }
+
+  .reader-h2 {
+    font-size: clamp(1.45rem, 3vw, 2rem);
+  }
+
+  .reader-h3 {
+    font-size: clamp(1.15rem, 2.3vw, 1.45rem);
+    margin-top: 1.2rem;
+  }
+
+  .reader-p,
+  .reader-list li {
+    margin: 0;
+    color: var(--ink-muted);
+    font-size: 1.06rem;
+    line-height: 2.02;
+  }
+
+  .reader-p strong,
+  .reader-list strong {
+    color: var(--ink);
+  }
+
+  .reader-p code,
+  .reader-list code {
+    font-family: var(--font-mono);
+    font-size: 0.95em;
+    background: rgba(23, 21, 18, 0.05);
+    padding: 0.08rem 0.3rem;
+    border-radius: 0.35rem;
+  }
+
+  .reader-list {
+    margin: 0;
+    padding-left: 1.25rem;
+    display: grid;
+    gap: 0.45rem;
+  }
+
+  .reader-list-ordered {
+    padding-left: 1.4rem;
+  }
+
+  @media (max-width: 1040px) {
+    .content-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .mobile-toc {
+      display: grid;
+      margin-bottom: 1rem;
+    }
+
+    .toc-card {
+      display: none;
+    }
+  }
+
+  @media (max-width: 960px) {
+    .book-hero {
+      grid-template-columns: 1fr;
+    }
+
+    .lede,
+    .hero-note {
+      max-width: 100%;
+    }
+
+    .book-meta {
+      padding: 0.9rem 1rem;
+    }
+
+    .reader {
+      padding: 1.1rem;
+    }
+
+    .reader-flow {
+      width: 100%;
+      gap: 0.9rem;
+    }
+  }
+</style>

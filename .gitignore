@@ -1,0 +1,24 @@
+# Publish only the website and the source material required to build it.
+*
+!.gitignore
+!README.md
+!site/
+!site/**
+site/node_modules/
+site/dist/
+site/.astro/
+site/astro-*.log
+site/astro-*.err.log
+
+!心行向量动力学/
+!心行向量动力学/**
+
+!books/
+!books/文明生存树/
+!books/文明生存树/export/
+!books/文明生存树/export/**
+!books/他们都只看到这个世界的一部分/
+!books/他们都只看到这个世界的一部分/chapters/
+!books/他们都只看到这个世界的一部分/chapters/**
+!books/损失厌恶：现代文明的底层逻辑/
+!books/损失厌恶：现代文明的底层逻辑/**

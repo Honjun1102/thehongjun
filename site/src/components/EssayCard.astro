@@ -1,0 +1,146 @@
+---
+import { lockPhrases } from "../utils/phraseLock";
+
+interface Props {
+  href: string;
+  title: string;
+  description: string;
+  publishedAt: string;
+  category: string;
+  languageNote?: string;
+  ctaLabel?: string;
+}
+
+const {
+  href,
+  title,
+  description,
+  publishedAt,
+  category,
+  languageNote,
+  ctaLabel = "阅读全文",
+} = Astro.props;
+---
+
+<a class="essay-row" href={href}>
+  <div class="essay-index" aria-hidden="true">
+    <span>{category}</span>
+    <time datetime={publishedAt}>{publishedAt}</time>
+  </div>
+  <div class="essay-copy">
+    <h3 set:html={lockPhrases(title)} />
+    <p set:html={lockPhrases(description)} />
+  </div>
+  <div class="essay-action">
+    {languageNote && <span class="language-note">{languageNote}</span>}
+    <span class="essay-cta">{ctaLabel}<span aria-hidden="true">↗</span></span>
+  </div>
+</a>
+
+<style>
+  .essay-row {
+    display: grid;
+    grid-template-columns: minmax(8rem, 0.7fr) minmax(0, 2.4fr) minmax(7rem, 0.6fr);
+    gap: clamp(1rem, 3vw, 2.5rem);
+    align-items: start;
+    padding: clamp(1.35rem, 2.8vw, 2rem) 0;
+    border-top: 1px solid rgba(23, 21, 18, 0.18);
+    color: var(--ink);
+  }
+
+  .essay-index,
+  .essay-action {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    color: var(--ink-muted);
+    font: 500 0.72rem/1.35 var(--font-mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .essay-index span {
+    color: var(--accent);
+  }
+
+  .essay-copy h3 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.45rem, 2.7vw, 2rem);
+    line-height: 1.2;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+
+  .essay-copy p {
+    max-width: 43rem;
+    margin: 0.7rem 0 0;
+    color: var(--ink-muted);
+    line-height: 1.75;
+    text-wrap: pretty;
+  }
+
+  .essay-action {
+    align-items: flex-end;
+    text-align: right;
+  }
+
+  .language-note {
+    color: var(--ink-muted);
+  }
+
+  .essay-cta {
+    display: inline-flex;
+    gap: 0.55rem;
+    align-items: center;
+    color: var(--ink);
+  }
+
+  .essay-cta span {
+    color: var(--accent);
+    transition: transform 160ms ease;
+  }
+
+  .essay-row:hover h3,
+  .essay-row:focus-visible h3 {
+    color: var(--accent);
+  }
+
+  .essay-row:hover .essay-cta span,
+  .essay-row:focus-visible .essay-cta span {
+    transform: translate(2px, -2px);
+  }
+
+  @media (max-width: 720px) {
+    .essay-row {
+      grid-template-columns: 1fr auto;
+      gap: 0.8rem 1rem;
+    }
+
+    .essay-index {
+      grid-column: 1 / -1;
+      flex-direction: row;
+      justify-content: space-between;
+    }
+
+    .essay-action {
+      align-self: end;
+    }
+
+    .language-note {
+      display: none;
+    }
+
+    .essay-copy p {
+      font-size: 0.95rem;
+    }
+
+    .essay-cta {
+      font-size: 0;
+    }
+
+    .essay-cta span {
+      font-size: 1rem;
+    }
+  }
+</style>

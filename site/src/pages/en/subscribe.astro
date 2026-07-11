@@ -1,0 +1,117 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import EnglishHeader from "../../components/EnglishHeader.astro";
+import EnglishFooter from "../../components/EnglishFooter.astro";
+import { englishSiteMeta } from "../../data/english";
+---
+
+<Layout title={`Subscribe | ${englishSiteMeta.title}`} description="Subscribe to weekly writing updates, reading paths, and future product experiments.">
+  <EnglishHeader />
+
+  <main class="shell section subscribe-shell">
+    <section class="card subscribe-hero">
+      <div class="subscribe-copy">
+        <p class="eyebrow">Subscribe</p>
+        <h1 class="page-title">Subscribe to the weekly writing,<br /><span class="keep-phrase">and receive the next essays first.</span></h1>
+        <p class="lede">
+          This is not a content firehose. The point of subscribing is simple:
+          to give serious readers one place where the next essay, route, and experiment can arrive.
+        </p>
+      </div>
+
+      <aside class="card subscribe-note">
+        <p class="eyebrow">You Will Receive</p>
+        <ul class="subscribe-list">
+          <li>New essays and route maps</li>
+          <li>Shorter notes and experiment logs</li>
+          <li>Priority notice when products or small groups open</li>
+        </ul>
+      </aside>
+    </section>
+
+    <section class="card subscribe-panel">
+      <p class="eyebrow">Current Status</p>
+      <h2>The page is live. You can subscribe here now.</h2>
+      <p>
+        This page now uses an embedded MailerLite form.
+        You can subscribe here directly and receive the next essays, maps, and experiment updates.
+      </p>
+
+      <div class="mailerlite-embed">
+        <div class="ml-embedded" data-form="LFwF5e"></div>
+      </div>
+
+      <div class="next-actions">
+        <a class="button button-secondary" href="/en/start-here/">Read the Foundations</a>
+        <a class="button button-secondary" href="/rebuild-order/">See the Rebuild Route</a>
+      </div>
+    </section>
+  </main>
+
+  <EnglishFooter />
+</Layout>
+
+<style>
+  .subscribe-shell {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .subscribe-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(18rem, 0.85fr);
+    gap: 1.5rem;
+    padding: 1.6rem;
+  }
+
+  .subscribe-copy,
+  .subscribe-note,
+  .subscribe-panel {
+    display: grid;
+    gap: 0.9rem;
+  }
+
+  .subscribe-list {
+    margin: 0;
+    padding-left: 1.15rem;
+    color: var(--ink-muted);
+    line-height: 1.85;
+  }
+
+  .subscribe-panel {
+    padding: 1.5rem;
+  }
+
+  .subscribe-panel h2,
+  .subscribe-panel p {
+    margin: 0;
+  }
+
+  .subscribe-panel p:last-of-type {
+    color: var(--ink-muted);
+    line-height: 1.85;
+  }
+
+  .mailerlite-embed {
+    max-width: 34rem;
+    margin-top: 0.5rem;
+  }
+
+  .next-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-top: 0.5rem;
+  }
+
+  @media (max-width: 900px) {
+    .subscribe-hero {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script is:inline>
+  (function(w,d,e,u,f,l,n){w[f]=w[f]||function(){(w[f].q=w[f].q||[]).push(arguments);};l=d.createElement(e);l.async=1;l.src=u;n=d.getElementsByTagName(e)[0];n.parentNode.insertBefore(l,n);})(window,document,'script','https://assets.mailerlite.com/js/universal.js','ml');
+  ml('account', '2205632');
+</script>

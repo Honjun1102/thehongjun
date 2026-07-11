@@ -1,0 +1,338 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import SiteHeader from "../../components/SiteHeader.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import EssayContentBlock from "../../components/EssayContentBlock.astro";
+import { essays } from "../../data/essays";
+import { getEnglishSlugFromChinese } from "../../data/essayLinks";
+import { siteMeta } from "../../data/site";
+
+export function getStaticPaths() {
+  return essays.map((essay) => ({
+    params: { slug: essay.slug },
+    props: { essay, englishSlug: getEnglishSlugFromChinese(essay.slug) },
+  }));
+}
+
+const { essay, englishSlug } = Astro.props;
+const isMethodBridge = essay.slug ===
+  "wei-shen-me-zui-jian-dan-de-dao-li-wang-wang-zui-jie-jin-shi-jie-de-ben-zhi";
+const articlePath = `/essays/${essay.slug}/`;
+const articleUrl = new URL(articlePath, Astro.site ?? "https://www.thehongjun.com").toString();
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: essay.title,
+  description: essay.description,
+  datePublished: essay.publishedAt,
+  author: { "@type": "Person", name: "Hong Jun" },
+  publisher: { "@type": "Organization", name: "Hong Jun" },
+  mainEntityOfPage: articleUrl,
+  inLanguage: "zh-CN",
+  url: articleUrl,
+};
+
+const headings = essay.blocks.filter((block) => block.type === "heading").map((block) => block.text);
+const introBlocks = [];
+const contentBlocks = [];
+let bodyStarted = false;
+
+for (const block of essay.blocks) {
+  if (!bodyStarted && block.type === "heading") bodyStarted = true;
+  if (bodyStarted) contentBlocks.push(block);
+  else introBlocks.push(block);
+}
+---
+
+<Layout
+  title={`${essay.title} | ${siteMeta.title}`}
+  description={essay.description}
+  ogType="article"
+  lang="zh-CN"
+  structuredData={structuredData}
+>
+  <SiteHeader />
+
+  <main class="shell essay-shell">
+    <article class="essay-page">
+      <header class="essay-hero">
+        <div class="hero-topline">
+          <a class="essay-back" href="/essays/">← 文章索引</a>
+          {englishSlug && <a class="lang-jump" href={`/en/essays/${englishSlug}/`}>Read in English ↗</a>}
+        </div>
+
+        <p class="essay-meta-line">
+          <span>{essay.category}</span>
+          {isMethodBridge && <span>方法桥</span>}
+          <time datetime={essay.publishedAt}>{essay.publishedAt}</time>
+        </p>
+
+        <h1 class="essay-title">{essay.title}</h1>
+        <p class="essay-deck">{essay.description}</p>
+      </header>
+
+      <div class="essay-stage">
+        <aside class="essay-rail" aria-label="文章目录">
+          <p class="rail-label">本文目录</p>
+          {headings.length ? (
+            <ol class="essay-toc">
+              {headings.map((heading, index) => <li><span>{String(index + 1).padStart(2, "0")}</span>{heading}</li>)}
+            </ol>
+          ) : (
+            <p class="rail-note">这篇文章作为一条连续的论证向前推进。</p>
+          )}
+        </aside>
+
+        <div class="essay-body">
+          {introBlocks.length > 0 && (
+            <section class="essay-opening">
+              {introBlocks.map((block) => <EssayContentBlock block={block} opening />)}
+            </section>
+          )}
+
+          {introBlocks.length > 0 && <div class="essay-divider" aria-hidden="true">※</div>}
+
+          <div class="essay-prose">
+            {contentBlocks.map((block) => <EssayContentBlock block={block} />)}
+          </div>
+
+          <footer class="essay-end">
+            <p>— 完 —</p>
+            <nav class="essay-actions" aria-label="阅读后续">
+              <a href="/essays/">返回文章索引</a>
+              <a href="/start-here/">从这里开始</a>
+              <a href="/support/">支持写作</a>
+            </nav>
+          </footer>
+        </div>
+      </div>
+    </article>
+  </main>
+
+  <SiteFooter />
+</Layout>
+
+<style>
+  .essay-shell {
+    padding-top: clamp(2.5rem, 6vw, 5.5rem);
+    padding-bottom: clamp(4rem, 9vw, 8rem);
+  }
+
+  .essay-page {
+    display: grid;
+    gap: clamp(3rem, 8vw, 7rem);
+  }
+
+  .essay-hero {
+    width: min(100%, 58rem);
+    margin: 0 auto;
+    padding-bottom: clamp(2.5rem, 6vw, 5rem);
+    border-bottom: 1px solid rgba(23, 21, 18, 0.35);
+  }
+
+  .hero-topline,
+  .essay-meta-line {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.8rem 1.4rem;
+    color: var(--ink-muted);
+    font: 500 0.72rem/1.4 var(--font-mono);
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+  }
+
+  .essay-back,
+  .lang-jump {
+    color: inherit;
+  }
+
+  .essay-back:hover,
+  .lang-jump:hover {
+    color: var(--accent);
+  }
+
+  .essay-meta-line {
+    justify-content: flex-start;
+    margin: clamp(2rem, 5vw, 4.5rem) 0 1.15rem;
+  }
+
+  .essay-meta-line span:first-child {
+    color: var(--accent);
+  }
+
+  .essay-title {
+    max-width: 15ch;
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(2.75rem, 7vw, 5.8rem);
+    font-weight: 600;
+    line-height: 1.04;
+    letter-spacing: -0.055em;
+    text-wrap: balance;
+  }
+
+  .essay-deck {
+    max-width: 42rem;
+    margin: clamp(1.5rem, 4vw, 2.8rem) 0 0 auto;
+    padding-left: 1.25rem;
+    border-left: 1px solid var(--accent);
+    color: var(--ink-muted);
+    font-size: clamp(1rem, 1.7vw, 1.2rem);
+    line-height: 1.9;
+  }
+
+  .essay-stage {
+    display: grid;
+    grid-template-columns: minmax(10rem, 15rem) minmax(0, 46rem) minmax(0, 15rem);
+    gap: clamp(1.5rem, 5vw, 5rem);
+    align-items: start;
+    justify-content: center;
+  }
+
+  .essay-rail {
+    position: sticky;
+    top: 7rem;
+    grid-column: 1;
+    padding-top: 0.4rem;
+  }
+
+  .rail-label {
+    margin: 0 0 1.2rem;
+    color: var(--accent);
+    font: 500 0.7rem/1 var(--font-mono);
+    letter-spacing: 0.12em;
+  }
+
+  .essay-toc {
+    display: grid;
+    gap: 0.85rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    color: var(--ink-muted);
+    font-size: 0.84rem;
+    line-height: 1.55;
+  }
+
+  .essay-toc li {
+    display: grid;
+    grid-template-columns: 1.8rem 1fr;
+    gap: 0.5rem;
+  }
+
+  .essay-toc span {
+    color: rgba(23, 21, 18, 0.42);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+  }
+
+  .rail-note {
+    margin: 0;
+    color: var(--ink-muted);
+    font-size: 0.84rem;
+    line-height: 1.7;
+  }
+
+  .essay-body {
+    grid-column: 2;
+    min-width: 0;
+    width: 100%;
+    max-width: 46rem;
+  }
+
+  .essay-opening {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .essay-divider {
+    margin: clamp(2.5rem, 6vw, 4.5rem) 0;
+    color: var(--accent);
+    font-family: var(--font-display);
+    text-align: center;
+  }
+
+  .essay-prose {
+    min-width: 0;
+    font-size: clamp(1.03rem, 1.25vw, 1.1rem);
+  }
+
+  .essay-prose > *:first-child {
+    margin-top: 0;
+  }
+
+  .essay-end {
+    margin-top: clamp(4rem, 9vw, 7rem);
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(23, 21, 18, 0.28);
+  }
+
+  .essay-end > p {
+    margin: 0;
+    color: var(--ink-muted);
+    font-family: var(--font-display);
+    text-align: center;
+  }
+
+  .essay-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.8rem 1.8rem;
+    margin-top: 2rem;
+  }
+
+  .essay-actions a {
+    border-bottom: 1px solid rgba(23, 21, 18, 0.35);
+    color: var(--ink);
+    font-size: 0.9rem;
+  }
+
+  .essay-actions a:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  @media (max-width: 1050px) {
+    .essay-stage {
+      grid-template-columns: minmax(9rem, 13rem) minmax(0, 46rem);
+    }
+  }
+
+  @media (max-width: 800px) {
+    .essay-stage {
+      grid-template-columns: minmax(0, 46rem);
+    }
+
+    .essay-rail {
+      position: static;
+      grid-column: 1;
+      padding: 0 0 1.5rem;
+      border-bottom: 1px solid rgba(23, 21, 18, 0.18);
+    }
+
+    .essay-body {
+      grid-column: 1;
+    }
+
+    .essay-toc {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 560px) {
+    .essay-title {
+      font-size: clamp(2.45rem, 12vw, 3.7rem);
+    }
+
+    .essay-deck {
+      margin-left: 0;
+    }
+
+    .essay-toc {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

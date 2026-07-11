@@ -1,0 +1,291 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import EnglishHeader from "../../../components/EnglishHeader.astro";
+import EnglishFooter from "../../../components/EnglishFooter.astro";
+import EssayCard from "../../../components/EssayCard.astro";
+import { getChineseSlugFromEnglish } from "../../../data/essayLinks";
+import { englishEssays, englishSiteMeta } from "../../../data/english";
+
+const orderedEssays = [...englishEssays].sort((a, b) => a.order - b.order);
+const foundationalEssays = orderedEssays.filter((essay) => essay.featured);
+const extendedEssays = orderedEssays.filter((essay) => !essay.featured);
+
+const categoryMeta = {
+  Mind: {
+    title: "Mind Line",
+    blurb:
+      "Essays about interpretation, social structure, education, and the frameworks that let a person process the age instead of merely react to it.",
+  },
+  Body: {
+    title: "Body Line",
+    blurb:
+      "Essays about physical grounding, embodied discipline, and why sovereignty collapses when the body collapses.",
+  },
+  Method: {
+    title: "Method Line",
+    blurb:
+      "Essays about rebuilding order in practice: first principles, route maps, sequencing, and how an ordinary person turns ideas into durable structure.",
+  },
+  Work: {
+    title: "Livelihood Line",
+    blurb:
+      "Essays about dependence, jobs, livelihood sovereignty, and building a life that is not fully rented from systems.",
+  },
+  Trust: {
+    title: "Trust Line",
+    blurb:
+      "Essays about cooperation, invisible capital, credibility, and the conditions under which communities become possible.",
+  },
+} as const;
+
+const groupedEssays = (Object.keys(categoryMeta) as Array<keyof typeof categoryMeta>)
+  .map((category) => ({
+    category,
+    meta: categoryMeta[category],
+    essays: extendedEssays.filter((essay) => essay.category === category),
+  }))
+  .filter((group) => group.essays.length > 0);
+---
+
+<Layout title={`Essays | ${englishSiteMeta.title}`} description="The English essay archive for Hong Jun: sovereignty, AI, history, body, livelihood, and trust.">
+  <EnglishHeader />
+
+  <main class="shell section">
+    <section class="archive-hero card">
+      <div class="archive-copy">
+        <p class="kicker">Essays</p>
+        <h1 class="page-title">This archive is a reading path, not a content stream.</h1>
+        <p class="lede">
+          These pieces are meant to be read as an interconnected body of thought. Begin
+          with the foundations. They set the scale and define the vocabulary for
+          everything else.
+        </p>
+      </div>
+
+      <aside class="archive-side">
+        <div class="archive-stat">
+          <span>{String(foundationalEssays.length).padStart(2, "0")}</span>
+          <p>Foundational essays. Start here to understand the central architecture.</p>
+        </div>
+        <div class="archive-note">
+          <p>Best order</p>
+          <strong>Read the four core essays first, then return to mind, body, method, livelihood, and trust.</strong>
+        </div>
+      </aside>
+    </section>
+
+    <section class="section-block">
+      <div class="section-head">
+        <div>
+          <p class="kicker">Foundations</p>
+          <h2>The four essays that define the worldview.</h2>
+        </div>
+        <p class="section-copy">
+          These are not summaries. They are the English foundation of the project:
+          sovereignty, AI, cycles, and the question of who actually moves history.
+        </p>
+      </div>
+
+      <div class="essay-list">
+        {
+          foundationalEssays.map((essay) => (
+            <EssayCard
+              href={`/en/essays/${essay.slug}/`}
+              title={essay.title}
+              description={essay.description}
+              publishedAt={essay.publishedAt}
+              category={essay.category}
+              ctaLabel="Read Essay"
+              languageNote={getChineseSlugFromEnglish(essay.slug) ? "Chinese Original" : undefined}
+            />
+          ))
+        }
+      </div>
+    </section>
+
+    {
+      groupedEssays.length > 0 && (
+        <section class="section-block">
+          <div class="section-head">
+            <div>
+              <p class="kicker">Extended Essays</p>
+              <h2>Then return to the fault line that is most real in your life.</h2>
+            </div>
+            <p class="section-copy">
+              Once the worldview is clear, the next move is not to collect more ideas at random.
+              It is to press the framework back into the pressure point that is actually weakening
+              you now: mind, body, method, livelihood, or trust.
+            </p>
+          </div>
+
+          <div class="group-stack">
+            {
+              groupedEssays.map((group) => (
+                <section class="group card">
+                  <div class="group-head">
+                    <div>
+                      <p class="group-label">{group.category}</p>
+                      <h3>{group.meta.title}</h3>
+                    </div>
+                    <p>{group.meta.blurb}</p>
+                  </div>
+
+                  <div class="essay-list compact">
+                    {
+                      group.essays.map((essay) => (
+                        <EssayCard
+                          href={`/en/essays/${essay.slug}/`}
+                          title={essay.title}
+                          description={essay.description}
+                          publishedAt={essay.publishedAt}
+                          category={essay.category}
+                          ctaLabel="Read Essay"
+                          languageNote={getChineseSlugFromEnglish(essay.slug) ? "Chinese Original" : undefined}
+                        />
+                      ))
+                    }
+                  </div>
+                </section>
+              ))
+            }
+          </div>
+        </section>
+      )
+    }
+  </main>
+
+  <EnglishFooter />
+</Layout>
+
+<style>
+  .archive-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(18rem, 0.72fr);
+    gap: 1.5rem;
+    padding: 1.6rem;
+    background:
+      radial-gradient(circle at top right, rgba(155, 77, 34, 0.08), transparent 30%),
+      linear-gradient(180deg, rgba(255, 252, 247, 0.98), rgba(247, 241, 231, 0.9));
+  }
+
+  .archive-copy,
+  .archive-side,
+  .archive-stat,
+  .archive-note {
+    display: grid;
+    gap: 0.8rem;
+  }
+
+  .archive-side {
+    align-content: start;
+  }
+
+  .archive-stat,
+  .archive-note {
+    padding: 1rem 1.1rem;
+    border: 1px solid rgba(23, 21, 18, 0.08);
+    border-radius: var(--radius-md);
+    background: rgba(255, 252, 247, 0.68);
+  }
+
+  .archive-stat span {
+    color: var(--accent);
+    font: 500 1rem/1 var(--font-mono);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .archive-stat p,
+  .archive-note p,
+  .archive-note strong,
+  .section-copy {
+    margin: 0;
+    color: var(--ink-muted);
+    line-height: 1.85;
+  }
+
+  .archive-note strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  .section-block {
+    display: grid;
+    gap: 1.25rem;
+    margin-top: 2rem;
+  }
+
+  .section-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(18rem, 0.72fr);
+    gap: 1.25rem;
+    align-items: end;
+  }
+
+  .section-head h2 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.9rem, 3.4vw, 2.7rem);
+    line-height: 1.1;
+  }
+
+  .essay-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+
+  .group-stack {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .group {
+    display: grid;
+    gap: 1rem;
+    padding: 1.2rem;
+  }
+
+  .group-head {
+    display: grid;
+    grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+    gap: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(23, 21, 18, 0.08);
+  }
+
+  .group-label {
+    margin: 0 0 0.45rem;
+    color: var(--accent);
+    font: 500 0.8rem/1 var(--font-mono);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .group-head h3 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 1.65rem;
+    line-height: 1.15;
+  }
+
+  .group-head p {
+    margin: 0;
+    color: var(--ink-muted);
+    line-height: 1.85;
+  }
+
+  .essay-list.compact {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @media (max-width: 960px) {
+    .archive-hero,
+    .section-head,
+    .essay-list,
+    .essay-list.compact,
+    .group-head {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,161 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import SiteHeader from "../../components/SiteHeader.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import { siteMeta } from "../../data/site";
+
+const books = [
+  {
+    title: "文明生存树：从生存公理重写人文社科",
+    role: "主干理论书",
+    status: "修订中",
+    href: "/books/civilization-survival-tree/",
+    pdfHref: "/books/civilization-survival-tree.pdf",
+    description:
+      "从生存、公理、开源与节流出发，重写群体、制度、历史与错题顺序，是现在这套理论里最完整的一条主线。",
+    forWho:
+      "适合第一次系统进入整套框架的人，也适合想从根部开始重新理解文明的人。",
+  },
+  {
+    title: "他们都只看到这个世界的一部分：把六门学科重新挂回一棵树",
+    role: "剖面批判书",
+    status: "修订中",
+    href: "/books/they-only-see-part-of-the-world/",
+    pdfHref: "/books/they-only-see-part-of-the-world.pdf",
+    description:
+      "把哲学、宗教、经济、政治、历史与文化重新挂回同一棵文明生存树，重点处理局部知识如何膨胀成世界解释。",
+    forWho:
+      "适合已经有一点理论兴趣，但总觉得不同学科各说各话、彼此打架的人。",
+  },
+  {
+    title: "损失厌恶：现代文明的底层逻辑",
+    role: "心理机制书",
+    status: "新稿接入",
+    href: "/books/loss-aversion-modern-civilization/",
+    description:
+      "从损失厌恶和心理承重墙出发，解释现代人的焦虑、关系勒索、消费主义、内卷和破局路径。",
+    forWho:
+      "适合想看清自己为什么总被恐惧、沉没成本、关系控制和社会评价绑架的人。",
+  },
+];
+---
+
+<Layout title={`书稿 | ${siteMeta.title}`} description="站内书稿书架页。这里放的是正在成形的整本书，而不是博客里的长文章。">
+  <SiteHeader />
+
+  <main class="shell section bookshelf">
+    <section class="page-intro">
+      <p class="eyebrow">书稿</p>
+      <h1 class="page-title">这里放的是书，不是博客里的超长文章。</h1>
+      <p class="lede">
+        文章按时间流动，书按结构生长。这里的书稿，有的负责立主干，有的负责把容易僭位的局部解释重新挂回它们该在的位置，也有的专门拆现代人的心理底层机制。
+      </p>
+    </section>
+
+    <section class="shelf-grid">
+      {
+        books.map((book) => (
+          <article class="card shelf-card">
+            <div class="shelf-meta">
+              <p class="book-role">{book.role}</p>
+              <p class="book-status">{book.status}</p>
+            </div>
+
+            <div class="shelf-copy">
+              <h2>{book.title}</h2>
+              <p>{book.description}</p>
+            </div>
+
+            <div class="reader-fit">
+              <p class="reader-label">适合谁先读</p>
+              <p>{book.forWho}</p>
+            </div>
+
+            <div class="book-actions">
+              <a class="button button-primary" href={book.href}>开始阅读</a>
+              {book.pdfHref && <a class="button button-secondary" href={book.pdfHref}>下载 PDF</a>}
+            </div>
+          </article>
+        ))
+      }
+    </section>
+  </main>
+
+  <SiteFooter />
+</Layout>
+
+<style>
+  .bookshelf {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .shelf-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.2rem;
+  }
+
+  .shelf-card {
+    display: grid;
+    gap: 1rem;
+    padding: 1.4rem;
+    align-content: start;
+    background:
+      radial-gradient(circle at top right, rgba(155, 77, 34, 0.08), transparent 30%),
+      linear-gradient(180deg, rgba(255, 252, 247, 0.98), rgba(247, 241, 231, 0.92));
+  }
+
+  .shelf-meta,
+  .shelf-copy,
+  .reader-fit {
+    display: grid;
+    gap: 0.45rem;
+  }
+
+  .shelf-meta {
+    grid-template-columns: 1fr auto;
+    align-items: center;
+  }
+
+  .book-role,
+  .book-status,
+  .reader-label {
+    margin: 0;
+    color: var(--accent);
+    font: 500 0.78rem/1 var(--font-mono);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .shelf-copy h2,
+  .shelf-copy p,
+  .reader-fit p {
+    margin: 0;
+  }
+
+  .shelf-copy h2 {
+    font-family: var(--font-display);
+    font-size: 1.8rem;
+    line-height: 1.18;
+  }
+
+  .shelf-copy p,
+  .reader-fit p:last-child {
+    color: var(--ink-muted);
+    line-height: 1.85;
+  }
+
+  .book-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-top: 0.2rem;
+  }
+
+  @media (max-width: 960px) {
+    .shelf-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,165 @@
+---
+import { navItems, siteMeta } from "../data/site";
+
+const currentPath = Astro.url.pathname;
+const primaryHrefs = ["/essays/", "/series/xin-xing-xiang-liang-dong-li-xue/", "/books/", "/about/"];
+const primaryNav = navItems.filter((item) => primaryHrefs.includes(item.href));
+---
+
+<header class="shell site-header">
+  <div class="masthead">
+    <a class="brand" href="/" aria-label={`${siteMeta.title} 首页`}>
+      <strong>{siteMeta.title}</strong>
+      <span>独立写作 · 思想刊物</span>
+    </a>
+
+    <p class="issue"><span>ISSUE</span> 2026—07</p>
+  </div>
+
+  <div class="navigation-row">
+    <nav class="nav" aria-label="主要导航">
+      {
+        primaryNav.map((item) => {
+          const isActive = currentPath === item.href || currentPath.startsWith(item.href);
+          return <a href={item.href} aria-current={isActive ? "page" : undefined}>{item.label}</a>;
+        })
+      }
+    </nav>
+
+    <nav class="utility-nav" aria-label="辅助导航">
+      <a href="/start-here/">从这里开始</a>
+      <a href="/subscribe/">订阅</a>
+      <a href="/en/" lang="en">EN</a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    padding-top: 1.2rem;
+  }
+
+  .masthead,
+  .navigation-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
+
+  .masthead {
+    padding-bottom: 1rem;
+  }
+
+  .brand {
+    display: flex;
+    align-items: baseline;
+    gap: 1.1rem;
+  }
+
+  .brand strong {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4vw, 3.6rem);
+    font-weight: 400;
+    letter-spacing: -0.04em;
+  }
+
+  .brand span,
+  .issue {
+    margin: 0;
+    color: var(--ink-muted);
+    font-size: 0.76rem;
+    letter-spacing: 0.12em;
+  }
+
+  .issue span {
+    color: var(--accent);
+    font-family: var(--font-mono);
+  }
+
+  .navigation-row {
+    align-items: center;
+    padding: 0.72rem 0;
+    border-top: 3px solid var(--ink);
+    border-bottom: 1px solid var(--line-dark);
+  }
+
+  .nav,
+  .utility-nav {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .nav a,
+  .utility-nav a {
+    position: relative;
+    padding: 0.25rem 0;
+    font-size: 0.9rem;
+  }
+
+  .nav a::after,
+  .utility-nav a::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    bottom: -0.1rem;
+    left: 0;
+    height: 1px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 180ms ease;
+  }
+
+  .nav a:hover::after,
+  .nav a[aria-current="page"]::after,
+  .utility-nav a:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+
+  .utility-nav {
+    gap: 1rem;
+    color: var(--ink-muted);
+  }
+
+  .utility-nav a:last-child {
+    font-family: var(--font-mono);
+    color: var(--accent);
+  }
+
+  @media (max-width: 760px) {
+    .masthead {
+      align-items: flex-start;
+    }
+
+    .brand {
+      display: grid;
+      gap: 0.25rem;
+    }
+
+    .issue {
+      padding-top: 0.55rem;
+    }
+
+    .navigation-row {
+      display: grid;
+      gap: 0.65rem;
+      overflow: hidden;
+    }
+
+    .nav,
+    .utility-nav {
+      width: 100%;
+      overflow-x: auto;
+      scrollbar-width: none;
+      white-space: nowrap;
+    }
+
+    .nav::-webkit-scrollbar,
+    .utility-nav::-webkit-scrollbar {
+      display: none;
+    }
+  }
+</style>

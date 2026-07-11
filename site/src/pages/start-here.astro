@@ -1,0 +1,233 @@
+---
+import Layout from "../layouts/Layout.astro";
+import SiteHeader from "../components/SiteHeader.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+import { essays } from "../data/essays";
+import { siteMeta, startHere } from "../data/site";
+
+const methodBridge = essays.find(
+  (essay) =>
+    essay.slug ===
+    "wei-shen-me-zui-jian-dan-de-dao-li-wang-wang-zui-jie-jin-shi-jie-de-ben-zhi",
+);
+
+const actionRoute = essays.find(
+  (essay) =>
+    essay.slug ===
+    "yi-ge-pu-tong-ren-ru-he-kai-shi-chong-jian-zi-ji-30-tian-lu-xian-tu",
+);
+
+const bookRoute = {
+  href: "/books/civilization-survival-tree/",
+  title: "文明生存树：从生存公理重写人文社科",
+  description: "如果你不想分篇读，而是想直接进入现在最完整的一条理论主线，就从整本书稿进入。",
+};
+---
+
+<Layout title={`从这里开始 | ${siteMeta.title}`} description="新读者从这里开始理解这个网站的总问题、解释层和阅读顺序。">
+  <SiteHeader />
+
+  <main class="shell section">
+    <section class="start-hero card">
+      <div class="start-copy">
+        <p class="kicker">从这里开始</p>
+        <h1 class="page-title">第一次来到这里，先别急着全部读完。</h1>
+        <p class="lede">
+          先看总问题，再看时代、系统和历史这些更大的解释层，最后才回到真正落在你身上的身体、思想与生计。
+        </p>
+      </div>
+
+      <aside class="start-summary">
+        <div class="summary-card">
+          <span>01</span>
+          <p>先定义主问题：人为什么会在这个时代慢慢失去自己。</p>
+        </div>
+        <div class="summary-card">
+          <span>02</span>
+          <p>再把坐标拿回来：你活在什么时代，站在什么结构里。</p>
+        </div>
+        <div class="summary-card">
+          <span>03</span>
+          <p>最后压回现实：身体与思想是根，生计是护城河。</p>
+        </div>
+      </aside>
+    </section>
+
+    <section class="route">
+      {
+        startHere.map((item) => (
+          <article class="card panel route-card">
+            <span>{item.order}</span>
+            <div class="route-main">
+              <p class="route-role">{item.role}</p>
+              <h2>{item.title}</h2>
+              <p>{item.why}</p>
+            </div>
+            <a href={item.href}>开始阅读</a>
+          </article>
+        ))
+      }
+    </section>
+
+    <section class="next-step">
+      <div class="section-head">
+        <div>
+          <p class="kicker">读完总纲之后</p>
+          <h2>读完四篇总纲，再把问题压回现实。</h2>
+        </div>
+        <p class="section-copy">
+          读完总纲，不要再泛泛地看更多概念，而是回到真正卡住你生活的那一层。
+        </p>
+      </div>
+
+      <a class="bridge-card card" href={bookRoute.href}>
+        <div class="bridge-meta">
+          <span>整本书稿</span>
+          <time>站内全文阅读</time>
+        </div>
+        <div class="bridge-copy">
+          <h3>{bookRoute.title}</h3>
+          <p>{bookRoute.description}</p>
+        </div>
+        <strong>直接进入书稿</strong>
+      </a>
+
+      {
+        methodBridge && (
+          <a class="bridge-card card" href={`/essays/${methodBridge.slug}/`}>
+            <div class="bridge-meta">
+              <span>方法论桥梁</span>
+              <time>{methodBridge.publishedAt}</time>
+            </div>
+            <div class="bridge-copy">
+              <h3>如果你想先拿到一把方法上的尺子</h3>
+              <p>这篇不是新的总纲，而是方法论桥梁。</p>
+            </div>
+            <strong>进入方法论桥梁</strong>
+          </a>
+        )
+      }
+
+      {
+        actionRoute && (
+          <a class="bridge-card card action-card" href={`/essays/${actionRoute.slug}/`}>
+            <div class="bridge-meta">
+              <span>行动路线</span>
+              <time>{actionRoute.publishedAt}</time>
+            </div>
+            <div class="bridge-copy">
+              <h3>如果你不想只理解问题，而是想真正开始</h3>
+              <p>这是一张 30 天路线图：先止血，再站稳，再开始重建。</p>
+            </div>
+            <strong>进入 30 天路线图</strong>
+          </a>
+        )
+      }
+    </section>
+  </main>
+
+  <SiteFooter />
+</Layout>
+
+<style>
+  .start-hero,
+  .bridge-card {
+    background:
+      radial-gradient(circle at top right, rgba(155, 77, 34, 0.08), transparent 30%),
+      linear-gradient(180deg, rgba(255, 252, 247, 0.98), rgba(247, 241, 231, 0.9));
+  }
+
+  .start-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(18rem, 0.8fr);
+    gap: 1.5rem;
+    padding: 1.6rem;
+  }
+
+  .start-summary,
+  .summary-card,
+  .route,
+  .next-step {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .summary-card {
+    padding: 1rem 1.1rem;
+    border: 1px solid rgba(23, 21, 18, 0.08);
+    border-radius: var(--radius-md);
+    background: rgba(255, 252, 247, 0.7);
+  }
+
+  .summary-card span,
+  .route-card span,
+  .bridge-meta {
+    color: var(--accent);
+    font: 500 0.8rem/1 var(--font-mono);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .summary-card p,
+  .route-card p,
+  .section-copy,
+  .bridge-copy p {
+    margin: 0;
+    color: var(--ink-muted);
+    line-height: 1.85;
+  }
+
+  .route-card {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 1rem;
+    align-items: center;
+    min-height: 8.6rem;
+  }
+
+  .route-main {
+    display: grid;
+    gap: 0.45rem;
+  }
+
+  .route-role {
+    margin: 0;
+    color: var(--accent);
+    font: 500 0.82rem/1 var(--font-mono);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .route-card h2,
+  .bridge-copy h3 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 1.45rem;
+  }
+
+  .route-card a,
+  .bridge-card strong {
+    color: var(--accent);
+    font: 500 0.8rem/1 var(--font-mono);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .bridge-card {
+    display: grid;
+    gap: 0.8rem;
+    padding: 1.3rem;
+  }
+
+  .bridge-copy {
+    display: grid;
+    gap: 0.45rem;
+  }
+
+  @media (max-width: 960px) {
+    .start-hero,
+    .route-card {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

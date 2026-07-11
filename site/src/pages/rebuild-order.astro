@@ -1,0 +1,240 @@
+---
+import Layout from "../layouts/Layout.astro";
+import SiteHeader from "../components/SiteHeader.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+import { siteMeta } from "../data/site";
+---
+
+<Layout
+  title={`个人重建顺序诊断 | ${siteMeta.title}`}
+  description="帮一个已经很乱的人，先把顺序排对：判断你现在最该先修哪一层，并给你一条30天起步路线。"
+>
+  <SiteHeader />
+
+  <main class="shell section product-shell">
+    <section class="card product-hero">
+      <div class="product-copy">
+        <p class="kicker">Product</p>
+        <h1 class="page-title">个人重建顺序诊断 + 30天起步路线</h1>
+        <p class="lede">
+          这不是一个成功学产品。它不承诺你 30 天逆天改命，只想帮一个已经很乱的人，
+          先判断自己现在最该先修哪一层，再给他一条不继续自耗的起步路线。
+        </p>
+
+        <div class="button-row">
+          <a class="button button-primary" href="/essays/xian-xiu-shen-ti-hai-shi-xian-sheng-ji-pu-tong-ren-zui-rong-yi-zou-cuo-de-chong-jian-shun-xu/">
+            先读入口文章
+          </a>
+          <a class="button button-secondary" href="/essays/yi-ge-pu-tong-ren-ru-he-kai-shi-chong-jian-zi-ji-30-tian-lu-xian-tu/">
+            查看 30 天路线图
+          </a>
+        </div>
+      </div>
+
+      <aside class="product-side">
+        <div class="summary-card">
+          <span>01</span>
+          <p>先判断：你现在主要失守在哪一层，先修身体，还是先生计。</p>
+        </div>
+        <div class="summary-card">
+          <span>02</span>
+          <p>先止血，再稳根，再做最小可行的生计重建，不再一上来就全面升级。</p>
+        </div>
+        <div class="summary-card">
+          <span>03</span>
+          <p>不是帮你逆袭，而是帮你先别继续往下掉，把顺序排对。</p>
+        </div>
+      </aside>
+    </section>
+
+    <section class="grid-two">
+      <article class="card panel">
+        <p class="kicker">It Fits You If</p>
+        <h2>它适合谁</h2>
+        <ul class="product-list">
+          <li>你已经感觉哪里不对劲，但说不清自己到底先该改什么。</li>
+          <li>你身体、思想、生计一起乱，但不知道哪个是根，哪个是表。</li>
+          <li>你不想听鸡汤，只想先把顺序弄明白。</li>
+          <li>你想重建自己，却总是一上来就把自己搞得更累。</li>
+        </ul>
+      </article>
+
+      <article class="card panel">
+        <p class="kicker">Not For</p>
+        <h2>它不适合谁</h2>
+        <ul class="product-list">
+          <li>想一夜翻盘的人。</li>
+          <li>想买一个“包治百病”答案的人。</li>
+          <li>只想听励志，不想看现实的人。</li>
+          <li>想把判断、行动和责任都外包给别人的人。</li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="card panel">
+      <p class="kicker">What You Get</p>
+      <h2>你会得到什么</h2>
+
+      <div class="deliverables">
+        <article class="deliverable">
+          <span>01</span>
+          <h3>一份个人重建顺序诊断</h3>
+          <p>帮你判断你现在主要失守在哪一层：身体、思想、生计，还是混合失守。</p>
+        </article>
+
+        <article class="deliverable">
+          <span>02</span>
+          <h3>一张重建顺序图</h3>
+          <p>把“根、护城河、放大机制”讲清楚，让你知道为什么顺序比强度更重要。</p>
+        </article>
+
+        <article class="deliverable">
+          <span>03</span>
+          <h3>一份 30 天起步动作表</h3>
+          <p>先止血，再稳根，再整理输入与节奏，最后做一个最小生计动作。</p>
+        </article>
+
+        <article class="deliverable">
+          <span>04</span>
+          <h3>一份阅读地图</h3>
+          <p>不同状态的人，先读不同文章。你不会再陷进“看了很多，还是不知道先做什么”。</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="card panel product-sequence">
+      <p class="kicker">How To Use</p>
+      <h2>最简单的使用顺序</h2>
+      <ol class="sequence-list">
+        <li>先读入口文章，理解为什么“顺序”比“强度”更重要。</li>
+        <li>再做顺序诊断，判断自己现在最该先修哪一层。</li>
+        <li>然后执行 30 天起步路线，只做最小可行动作。</li>
+        <li>30 天后再决定要不要继续放大，而不是第一天就全面升级。</li>
+      </ol>
+    </section>
+
+    <section class="card panel opening-note" id="opening">
+      <p class="kicker">Opening</p>
+      <h2>当前开放方式</h2>
+      <p>
+        这个产品现在先按小范围、手动方式开放。原因很简单：我更想先确认，它真的能帮到人，
+        而不是先把它包装成一个很漂亮的销售页。
+      </p>
+      <p>
+        所以现在最合理的入口是：
+        <strong>先读入口文章，再决定你是否真的需要这套东西。</strong>
+      </p>
+      <div class="button-row">
+        <a class="button button-primary" href="/essays/xian-xiu-shen-ti-hai-shi-xian-sheng-ji-pu-tong-ren-zui-rong-yi-zou-cuo-de-chong-jian-shun-xu/">
+          进入入口文章
+        </a>
+        <a class="button button-secondary" href="/essays/yi-ge-pu-tong-ren-ru-he-kai-shi-chong-jian-zi-ji-30-tian-lu-xian-tu/">
+          先看行动路线
+        </a>
+      </div>
+      <p class="muted small-note">
+        等正式购买入口、支付和交付方式稳定之后，这一块可以替换成正式按钮。
+      </p>
+    </section>
+  </main>
+
+  <SiteFooter />
+</Layout>
+
+<style>
+  .product-shell {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .product-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(18rem, 0.78fr);
+    gap: 1.5rem;
+    padding: 1.6rem;
+    background:
+      radial-gradient(circle at top right, rgba(155, 77, 34, 0.08), transparent 30%),
+      linear-gradient(180deg, rgba(255, 252, 247, 0.98), rgba(247, 241, 231, 0.9));
+  }
+
+  .product-copy,
+  .product-side,
+  .summary-card,
+  .deliverables,
+  .deliverable {
+    display: grid;
+    gap: 0.9rem;
+  }
+
+  .summary-card {
+    padding: 1rem 1.1rem;
+    border: 1px solid rgba(23, 21, 18, 0.08);
+    border-radius: var(--radius-md);
+    background: rgba(255, 252, 247, 0.7);
+  }
+
+  .summary-card span,
+  .deliverable span {
+    color: var(--accent);
+    font: 500 0.8rem/1 var(--font-mono);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .summary-card p,
+  .deliverable p,
+  .sequence-list,
+  .opening-note p {
+    margin: 0;
+    color: var(--ink-muted);
+    line-height: 1.85;
+  }
+
+  .grid-two {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+
+  .product-list,
+  .sequence-list {
+    padding-left: 1.2rem;
+  }
+
+  .product-list li,
+  .sequence-list li {
+    margin-top: 0.55rem;
+  }
+
+  .deliverables {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-top: 1rem;
+  }
+
+  .deliverable {
+    padding: 1rem 1.1rem;
+    border: 1px solid rgba(23, 21, 18, 0.08);
+    border-radius: var(--radius-md);
+    background: rgba(255, 252, 247, 0.7);
+  }
+
+  .deliverable h3,
+  .opening-note h2,
+  .product-sequence h2,
+  .panel h2 {
+    margin: 0;
+    font-family: var(--font-display);
+  }
+
+  .small-note {
+    font-size: 0.95rem;
+  }
+
+  @media (max-width: 960px) {
+    .product-hero,
+    .grid-two,
+    .deliverables {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

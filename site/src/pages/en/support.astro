@@ -1,0 +1,229 @@
+---
+import { existsSync } from "node:fs";
+import Layout from "../../layouts/Layout.astro";
+import EnglishHeader from "../../components/EnglishHeader.astro";
+import EnglishFooter from "../../components/EnglishFooter.astro";
+import { englishSiteMeta } from "../../data/english";
+
+function resolveSupportImage(name: string) {
+  const candidates = [
+    { publicPath: `/support/${name}.png`, file: new URL(`../../../public/support/${name}.png`, import.meta.url) },
+    { publicPath: `/support/${name}.jpg`, file: new URL(`../../../public/support/${name}.jpg`, import.meta.url) },
+    { publicPath: `/support/${name}.jpeg`, file: new URL(`../../../public/support/${name}.jpeg`, import.meta.url) },
+  ];
+
+  return candidates.find((item) => existsSync(item.file));
+}
+
+const wechatImage = resolveSupportImage("wechat-pay");
+const alipayImage = resolveSupportImage("alipay-pay");
+---
+
+<Layout
+  title={`Support | ${englishSiteMeta.title}`}
+  description="If the writing helps you, you can support it here. This page is also part of building trust and attracting aligned people."
+>
+  <EnglishHeader />
+
+  <main class="shell section support-shell">
+    <section class="card support-hero">
+      <div class="support-copy">
+        <p class="eyebrow">Support</p>
+        <h1 class="page-title">
+          If the writing helps you,
+          <br />
+          you can support it here.
+        </h1>
+        <p class="lede">
+          This is not a paywall. It is a simple support page.
+          If the essays, maps, and experiments are useful to you,
+          you can buy me a coffee and help me keep writing this line more deeply and more steadily.
+        </p>
+      </div>
+
+      <aside class="support-note">
+        <p class="eyebrow">Why This Page Exists</p>
+        <h2>Support is also trust.</h2>
+        <p>
+          I did not build this website just to post essays.
+          I built it to slowly attract people who want to think clearly, live seriously,
+          and rebuild themselves in the age of AI.
+        </p>
+        <ul class="support-list">
+          <li>The essays stay public. Support is voluntary.</li>
+          <li>This page is here to gather aligned people, not just collect random traffic.</li>
+          <li>If companies can use AI, individuals can use AI too. You can build your own leverage.</li>
+        </ul>
+      </aside>
+    </section>
+
+    <section class="purpose-grid">
+      <article class="card purpose-card">
+        <p class="eyebrow">Trust</p>
+        <h3>Build trust first</h3>
+        <p>
+          Real collaboration does not begin with a group chat or a product.
+          It begins when people trust the line you are building and the way you are living it.
+        </p>
+      </article>
+
+      <article class="card purpose-card">
+        <p class="eyebrow">Aligned People</p>
+        <h3>Find the right kind of people</h3>
+        <p>
+          I care less about broad traffic and more about people who are seriously thinking about body,
+          thought, livelihood, and the changes brought by AI.
+        </p>
+      </article>
+
+      <article class="card purpose-card">
+        <p class="eyebrow">AI</p>
+        <h3>You can become a one-person force</h3>
+        <p>
+          AI does not only mean layoffs. It also means a new form of independence.
+          If companies can use AI to reduce headcount, individuals can use AI to build new leverage.
+        </p>
+      </article>
+    </section>
+
+    <section class="support-grid">
+      <article class="card support-card">
+        <p class="eyebrow">WeChat</p>
+        <h2>WeChat Pay</h2>
+        {
+          wechatImage ? (
+            <img class="support-qr" src={wechatImage.publicPath} alt="WeChat Pay QR code" loading="lazy" />
+          ) : (
+            <div class="support-placeholder">
+              <strong>Waiting for WeChat QR code</strong>
+              <p>Place the image at <code>site/public/support/wechat-pay.png</code> or <code>wechat-pay.jpg</code></p>
+            </div>
+          )
+        }
+      </article>
+
+      <article class="card support-card">
+        <p class="eyebrow">Alipay</p>
+        <h2>Alipay</h2>
+        {
+          alipayImage ? (
+            <img class="support-qr" src={alipayImage.publicPath} alt="Alipay QR code" loading="lazy" />
+          ) : (
+            <div class="support-placeholder">
+              <strong>Waiting for Alipay QR code</strong>
+              <p>Place the image at <code>site/public/support/alipay-pay.png</code> or <code>alipay-pay.jpg</code></p>
+            </div>
+          )
+        }
+      </article>
+    </section>
+  </main>
+
+  <EnglishFooter />
+</Layout>
+
+<style>
+  .support-shell {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .support-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(18rem, 0.95fr);
+    gap: 1.4rem;
+    padding: 1.5rem;
+    align-items: start;
+  }
+
+  .support-copy,
+  .support-note,
+  .support-card,
+  .purpose-card {
+    display: grid;
+    gap: 0.8rem;
+  }
+
+  .support-note {
+    padding: 1.15rem 1.2rem;
+    border-radius: 1.6rem;
+    border: 1px solid rgba(23, 21, 18, 0.1);
+    background: rgba(255, 252, 247, 0.72);
+  }
+
+  .support-note h2,
+  .support-card h2,
+  .purpose-card h3 {
+    margin: 0;
+    font-family: var(--font-display);
+  }
+
+  .support-note p,
+  .purpose-card p {
+    margin: 0;
+    color: var(--ink-muted);
+    line-height: 1.8;
+  }
+
+  .support-list {
+    margin: 0;
+    padding-left: 1.15rem;
+    color: var(--ink-muted);
+    line-height: 1.8;
+  }
+
+  .purpose-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .purpose-card,
+  .support-card {
+    padding: 1.15rem 1.2rem;
+  }
+
+  .support-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+
+  .support-qr {
+    width: min(100%, 21rem);
+    aspect-ratio: 1 / 1.55;
+    object-fit: contain;
+    border-radius: 1rem;
+    border: 1px solid rgba(23, 21, 18, 0.08);
+    background: rgba(255, 252, 247, 0.96);
+    box-shadow: 0 14px 28px rgba(34, 20, 10, 0.08);
+  }
+
+  .support-placeholder {
+    width: min(100%, 21rem);
+    min-height: 24rem;
+    display: grid;
+    place-items: center;
+    padding: 1.2rem;
+    text-align: center;
+    border-radius: 1rem;
+    border: 1px dashed rgba(23, 21, 18, 0.18);
+    background: rgba(255, 252, 247, 0.72);
+    color: var(--ink-muted);
+    line-height: 1.75;
+  }
+
+  .support-placeholder strong {
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+  }
+
+  @media (max-width: 960px) {
+    .support-hero,
+    .purpose-grid,
+    .support-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

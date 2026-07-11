@@ -1,0 +1,5 @@
+yourdomain.com, www.yourdomain.com {
+    root * /var/www/hongjun-site
+    encode zstd gzip
+    file_server
+}

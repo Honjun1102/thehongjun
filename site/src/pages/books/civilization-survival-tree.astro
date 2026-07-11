@@ -1,0 +1,24 @@
+---
+import path from "node:path";
+import BookReaderPage from "../../components/BookReaderPage.astro";
+
+const sourcePath = path.resolve(
+  process.cwd(),
+  "..",
+  "books",
+  "文明生存树",
+  "export",
+  "book_merged.md",
+);
+---
+
+<BookReaderPage
+  sourcePath={sourcePath}
+  title="文明生存树"
+  subtitle="从生存公理重写人文社科"
+  description="《文明生存树：从生存公理重写人文社科》站内全文阅读页。"
+  heroLede="这本书真正想处理的，不是几本名著有没有说错，而是人为什么总会抓住一根很强的枝条，然后把整棵树都交给它解释。"
+  heroNote="它从生存、公理、开源与节流出发，一路追到制度、历史、群体和错题顺序，最后想回答的是：一个文明为什么会把错误的问题问得越来越成熟、越来越稳定、越来越像常识。"
+  quote="文明很多时候不是死于没有答案，而是死于把错误的问题问了太久。"
+  pdfHref="/books/civilization-survival-tree.pdf"
+/>

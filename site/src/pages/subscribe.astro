@@ -1,0 +1,122 @@
+---
+import Layout from "../layouts/Layout.astro";
+import SiteHeader from "../components/SiteHeader.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+import { siteMeta } from "../data/site";
+
+const contactEmail = "honjun@tju.edu.cn";
+---
+
+<Layout
+  title={`订阅写作 | ${siteMeta.title}`}
+  description="订阅每周写作更新，先收到新文章、路线图和后续实验。"
+>
+  <SiteHeader />
+
+  <main class="shell section subscribe-shell">
+    <section class="card subscribe-hero">
+      <p class="eyebrow">订阅写作</p>
+      <h1 class="page-title">
+        订阅每周写作，
+        <br />
+        先收到新文章、路线图和后续实验。
+      </h1>
+      <p class="lede">
+        这里不是资讯流，也不是内容噪点。订阅的意义只有一个：让真正愿意继续读下去的人，不会和这条线失散。
+      </p>
+
+      <ul class="subscribe-list">
+        <li>每周新文章或新路线图更新</li>
+        <li>更短的阶段判断和实验记录</li>
+        <li>后续产品、小组或社群开放时的优先通知</li>
+      </ul>
+
+      <p class="subscribe-contact">
+        也可以直接写信给我：
+        <a href={`mailto:${contactEmail}`}>{contactEmail}</a>
+      </p>
+    </section>
+
+    <section class="card subscribe-panel">
+      <p class="eyebrow">留下邮箱</p>
+      <h2>先接住这条线，后面慢慢把自己拿回来。</h2>
+      <p>
+        在这里留下邮箱后，你会先收到我的新文章、阅读路径和后续实验更新。不是为了制造紧迫感，而是让这条线真正能继续往下走。
+      </p>
+
+      <div class="mailerlite-embed">
+        <div class="ml-embedded" data-form="LFwF5e"></div>
+      </div>
+
+      <div class="next-actions">
+        <a class="button button-secondary" href="/start-here/">先读总纲</a>
+        <a class="button button-secondary" href="/rebuild-order/">先看重建路线</a>
+      </div>
+    </section>
+  </main>
+
+  <SiteFooter />
+</Layout>
+
+<style>
+  .subscribe-shell {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .subscribe-hero,
+  .subscribe-panel {
+    padding: 1.5rem;
+  }
+
+  .subscribe-list {
+    margin: 0.2rem 0 0;
+    padding-left: 1.15rem;
+    color: var(--ink-muted);
+    line-height: 1.85;
+  }
+
+  .subscribe-contact {
+    margin: 0.2rem 0 0;
+    color: var(--ink-muted);
+    line-height: 1.75;
+  }
+
+  .subscribe-contact a {
+    color: var(--accent);
+    text-decoration: none;
+    word-break: break-all;
+  }
+
+  .subscribe-panel {
+    display: grid;
+    gap: 0.9rem;
+  }
+
+  .subscribe-panel h2,
+  .subscribe-panel p {
+    margin: 0;
+  }
+
+  .subscribe-panel p:last-of-type {
+    color: var(--ink-muted);
+    line-height: 1.85;
+  }
+
+  .mailerlite-embed {
+    max-width: 36rem;
+    margin-top: 0.5rem;
+  }
+
+  .next-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-top: 0.5rem;
+  }
+</style>
+
+<script is:inline>
+  (function(w,d,e,u,f,l,n){w[f]=w[f]||function(){(w[f].q=w[f].q||[]).push(arguments);};l=d.createElement(e);l.async=1;l.src=u;n=d.getElementsByTagName(e)[0];n.parentNode.insertBefore(l,n);})(window,document,'script','https://assets.mailerlite.com/js/universal.js','ml');
+  ml('account', '2205632');
+</script>

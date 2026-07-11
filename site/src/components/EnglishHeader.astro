@@ -1,0 +1,173 @@
+---
+import { englishNavItems, englishSiteMeta } from "../data/english";
+
+const currentPath = Astro.url.pathname;
+---
+
+<header class="shell site-header">
+  <a class="brand" href="/en">
+    <span class="brand-mark">HJ</span>
+    <span class="brand-copy">
+      <strong>{englishSiteMeta.title}</strong>
+      <small>{englishSiteMeta.subtitle}</small>
+    </span>
+  </a>
+
+  <div class="header-actions">
+    <nav class="nav">
+      {
+        englishNavItems.map((item) => (
+          <a
+            href={item.href}
+            class:list={[
+              "nav-link",
+              currentPath === item.href ||
+              (item.href !== "/en" && currentPath.startsWith(item.href))
+                ? "is-active"
+                : "",
+            ]}
+          >
+            {item.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <a
+      href="/"
+      class:list={[
+        "lang-link",
+        currentPath === "/" || (!currentPath.startsWith("/en") && currentPath !== "/")
+          ? "is-active"
+          : "",
+      ]}
+      aria-label="Chinese edition"
+    >
+      中文
+    </a>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding: 1.2rem 0;
+    backdrop-filter: blur(18px);
+  }
+
+  .site-header::after {
+    content: "";
+    position: absolute;
+    inset: auto 0 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--line), transparent);
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .brand-mark {
+    display: inline-grid;
+    place-items: center;
+    width: 3.2rem;
+    height: 3.2rem;
+    border-radius: 999px;
+    border: 1px solid rgba(23, 21, 18, 0.08);
+    background:
+      radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.18), transparent 45%),
+      linear-gradient(135deg, #1f1b18, #3c2a1d);
+    color: #f6f0e4;
+    font: 600 0.92rem/1 var(--font-mono);
+    letter-spacing: 0.12em;
+    box-shadow:
+      0 16px 30px rgba(34, 20, 10, 0.18),
+      inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  }
+
+  .brand-copy {
+    display: grid;
+    gap: 0.18rem;
+  }
+
+  .brand-copy strong {
+    font-family: var(--font-display);
+    font-size: 1.45rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+  }
+
+  .brand-copy small {
+    color: var(--ink-muted);
+    font: 500 0.78rem/1 var(--font-mono);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+  }
+
+  .nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: flex-end;
+  }
+
+  .nav-link,
+  .lang-link {
+    padding: 0.5rem 0.9rem;
+    border-radius: 999px;
+    color: var(--ink-muted);
+    font-size: 0.95rem;
+    transition:
+      background-color 160ms ease,
+      color 160ms ease,
+      border-color 160ms ease;
+  }
+
+  .nav-link:hover,
+  .nav-link.is-active,
+  .lang-link:hover,
+  .lang-link.is-active {
+    color: var(--ink);
+    background: rgba(23, 21, 18, 0.06);
+  }
+
+  .lang-link {
+    border: 1px solid rgba(23, 21, 18, 0.1);
+    font: 500 0.78rem/1 var(--font-mono);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 920px) {
+    .site-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .header-actions {
+      width: 100%;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .nav {
+      width: 100%;
+      justify-content: flex-start;
+    }
+  }
+</style>

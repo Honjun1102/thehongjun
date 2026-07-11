@@ -1,0 +1,158 @@
+---
+import type { EssayBlock } from "../data/essays";
+
+interface Props {
+  block: EssayBlock;
+  opening?: boolean;
+}
+
+const { block, opening = false } = Astro.props;
+
+function escapeHtml(value: string) {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function renderInline(value = "") {
+  return escapeHtml(value).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+}
+---
+
+{
+  block.type === "heading" ? (
+    <h2 class="essay-heading" set:html={renderInline(block.text)} />
+  ) : block.type === "quote" ? (
+    <blockquote class="essay-quote" set:html={renderInline(block.text)} />
+  ) : block.type === "divider" ? (
+    <div class="essay-block-divider" aria-hidden="true"></div>
+  ) : block.type === "table" ? (
+    <div class="essay-table-scroll" role="region" aria-label="文章数据表" tabindex="0">
+      <table>
+        <thead>
+          <tr>
+            {block.headers?.map((header, index) => (
+              <th style={`text-align:${block.alignments?.[index] ?? "left"}`} set:html={renderInline(header)} />
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {block.rows?.map((row) => (
+            <tr>
+              {block.headers?.map((_, index) => (
+                <td style={`text-align:${block.alignments?.[index] ?? "left"}`} set:html={renderInline(row[index] ?? "")} />
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  ) : block.type === "image" ? (
+    <figure class="essay-figure">
+      <img src={block.src} alt={block.text ?? ""} loading="lazy" decoding="async" />
+      {block.text && <figcaption>{block.text}</figcaption>}
+    </figure>
+  ) : (
+    <p class:list={["essay-paragraph", { "opening-paragraph": opening }]} set:html={renderInline(block.text)} />
+  )
+}
+
+<style>
+  .essay-paragraph {
+    margin: 1.3rem 0;
+    color: rgba(23, 21, 18, 0.82);
+    line-height: 2;
+    letter-spacing: 0.01em;
+  }
+
+  .opening-paragraph {
+    margin: 0;
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-size: clamp(1.16rem, 1.9vw, 1.4rem);
+    line-height: 1.95;
+  }
+
+  .essay-heading {
+    margin: clamp(3.4rem, 8vw, 5.4rem) 0 1.3rem;
+    padding-top: 1.1rem;
+    border-top: 1px solid rgba(23, 21, 18, 0.28);
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-size: clamp(1.7rem, 4vw, 2.35rem);
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+  }
+
+  .essay-quote {
+    margin: 2.4rem 0;
+    padding: 0.2rem 0 0.2rem clamp(1.1rem, 3vw, 1.8rem);
+    border-left: 1px solid var(--accent);
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-size: clamp(1.08rem, 2vw, 1.25rem);
+    line-height: 1.85;
+    white-space: pre-line;
+  }
+
+  .essay-block-divider {
+    width: 3.5rem;
+    height: 1px;
+    margin: 3rem auto;
+    background: rgba(23, 21, 18, 0.35);
+  }
+
+  .essay-table-scroll {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    margin: 1.6rem 0 2rem;
+    overflow-x: auto;
+    border-top: 1px solid rgba(23, 21, 18, 0.32);
+    border-bottom: 1px solid rgba(23, 21, 18, 0.32);
+  }
+
+  table {
+    width: 100%;
+    min-width: 32rem;
+    border-collapse: collapse;
+    table-layout: fixed;
+    font-size: 0.92rem;
+    line-height: 1.65;
+  }
+
+  th,
+  td {
+    padding: 0.7rem 0.75rem;
+    border-bottom: 1px solid rgba(23, 21, 18, 0.1);
+    white-space: nowrap;
+  }
+
+  th {
+    color: var(--ink);
+    font-weight: 700;
+  }
+
+  .essay-figure {
+    width: 100%;
+    margin: 2.2rem 0 2.5rem;
+  }
+
+  .essay-figure img {
+    display: block;
+    width: 100%;
+    height: auto;
+    background: #f7f5f0;
+  }
+
+  .essay-figure figcaption {
+    margin-top: 0.7rem;
+    color: rgba(23, 21, 18, 0.58);
+    font-size: 0.86rem;
+    line-height: 1.65;
+    text-align: center;
+  }
+</style>

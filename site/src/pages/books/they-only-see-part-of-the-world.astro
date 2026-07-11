@@ -1,0 +1,32 @@
+---
+import fs from "node:fs";
+import path from "node:path";
+import BookReaderPage from "../../components/BookReaderPage.astro";
+
+const chaptersDir = path.resolve(
+  process.cwd(),
+  "..",
+  "books",
+  "他们都只看到这个世界的一部分",
+  "chapters",
+);
+
+const markdownSource = fs
+  .readdirSync(chaptersDir)
+  .filter((name) => name.endsWith(".md"))
+  .sort((a, b) => a.localeCompare(b, "zh-CN"))
+  .map((name) => fs.readFileSync(path.join(chaptersDir, name), "utf8").trim())
+  .join("\n\n");
+---
+
+<BookReaderPage
+  markdownSource={markdownSource}
+  title="他们都只看到这个世界的一部分"
+  subtitle="从文明生存树看哲学、宗教、经济、政治、历史与文化的有机关联"
+  description="《他们都只看到这个世界的一部分》站内全文阅读页。"
+  heroLede="这本书真正想处理的，不是哪一门学科赢了，而是为什么人总会抓住世界的一部分，然后把这一部分误抬成全部世界。"
+  heroNote="它把哲学、宗教、经济、政治、历史与文化重新挂回同一棵文明生存树上，想回答的是：局部知识为什么会慢慢膨胀成傲慢，问题一旦问错，后面的努力又为什么常常只是被整齐地浪费。"
+  quote="问题一旦问错，后面的努力常常不是白费，而是被整齐地浪费。"
+  pdfHref="/books/they-only-see-part-of-the-world.pdf"
+  readerHint="想直接进整条理论主线的人"
+/>

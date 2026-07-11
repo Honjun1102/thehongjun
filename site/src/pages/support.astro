@@ -1,0 +1,162 @@
+---
+import Layout from "../layouts/Layout.astro";
+import SiteHeader from "../components/SiteHeader.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+import { siteMeta } from "../data/site";
+
+const contactEmail = "honjun@tju.edu.cn";
+---
+
+<Layout
+  title={`支持写作 | ${siteMeta.title}`}
+  description="如果这些文章对你有帮助，你可以在这里支持我继续写下去。这里不只是收款入口，也是建立信任、吸引同路人的地方。"
+>
+  <SiteHeader />
+
+  <main class="shell section support-shell">
+    <section class="card support-hero">
+      <p class="eyebrow">支持写作</p>
+      <h1 class="page-title">
+        如果这些文章对你有帮助，
+        <br />
+        你可以在这里支持我继续写下去。
+      </h1>
+      <p class="lede">
+        这里不是付费墙，也不是会员区。它只是一个简单的赞赏入口。如果这些写作、路线图和实验对你有价值，
+        你可以请我喝杯咖啡，支持我把这条线继续写深、写长。
+      </p>
+
+      <div class="support-points">
+        <article class="support-point">
+          <p class="eyebrow">信任</p>
+          <h2>先把信任做出来，再决定要不要一起往前走。</h2>
+          <p>
+            我做这个网站，不只是为了发文章。也是为了慢慢吸引那些愿意认真生活、认真判断、认真重建自己的人。
+            先彼此看见，再决定要不要继续同行。
+          </p>
+        </article>
+
+        <article class="support-point">
+          <p class="eyebrow">AI</p>
+          <h2>公司用 AI，你也可以用 AI。你完全可以一人成军。</h2>
+          <p>
+            AI 带来的不只是裁员，也带来了一种新的独立可能。当公司不再需要你时，你也不必永远把自己绑定在公司里。
+            你可以借助 AI，慢慢把能力、作品和生计重新组织在自己手里。
+          </p>
+        </article>
+      </div>
+
+      <p class="support-contact">
+        想直接联系我，也可以写信到
+        <a href={`mailto:${contactEmail}`}>{contactEmail}</a>
+      </p>
+    </section>
+
+    <section class="support-grid">
+      <article class="card support-card">
+        <p class="eyebrow">微信</p>
+        <h2>微信赞赏 / 收款码</h2>
+        <img class="support-qr" src="/support/wechat-pay.jpg" alt="微信收款码" loading="lazy" />
+      </article>
+
+      <article class="card support-card">
+        <p class="eyebrow">支付宝</p>
+        <h2>支付宝收款码</h2>
+        <img class="support-qr" src="/support/alipay-pay.jpg" alt="支付宝收款码" loading="lazy" />
+      </article>
+    </section>
+
+    <section class="card support-footer">
+      <p class="eyebrow">最后一句</p>
+      <h2>你支持的，不只是一篇文章，而是一条线继续往下长。</h2>
+      <p>
+        它会帮助我继续把身体、思想、生计、信任这条线写下去，也会帮助我继续把身体练习记录、AI 生计实验和更清楚的路线图做出来。
+      </p>
+    </section>
+  </main>
+
+  <SiteFooter />
+</Layout>
+
+<style>
+  .support-shell {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .support-hero,
+  .support-card,
+  .support-footer {
+    padding: 1.5rem;
+  }
+
+  .support-points {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    margin-top: 0.75rem;
+  }
+
+  .support-point {
+    display: grid;
+    gap: 0.7rem;
+    padding: 1.05rem 1.1rem;
+    border-radius: 1.4rem;
+    border: 1px solid rgba(23, 21, 18, 0.08);
+    background: rgba(255, 252, 247, 0.72);
+  }
+
+  .support-point h2,
+  .support-card h2,
+  .support-footer h2 {
+    margin: 0;
+    font-family: var(--font-display);
+  }
+
+  .support-point p:last-child,
+  .support-footer p:last-child {
+    margin: 0;
+    color: var(--ink-muted);
+    line-height: 1.8;
+  }
+
+  .support-contact {
+    margin: 0.2rem 0 0;
+    color: var(--ink-muted);
+    line-height: 1.75;
+  }
+
+  .support-contact a {
+    color: var(--accent);
+    text-decoration: none;
+    word-break: break-all;
+  }
+
+  .support-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+
+  .support-card {
+    display: grid;
+    gap: 0.9rem;
+  }
+
+  .support-qr {
+    width: min(100%, 22rem);
+    justify-self: start;
+    object-fit: contain;
+    border-radius: 1rem;
+    border: 1px solid rgba(23, 21, 18, 0.08);
+    background: rgba(255, 252, 247, 0.96);
+    box-shadow: 0 14px 28px rgba(34, 20, 10, 0.08);
+  }
+
+  @media (max-width: 960px) {
+    .support-points,
+    .support-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

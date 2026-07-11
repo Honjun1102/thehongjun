@@ -1,0 +1,64 @@
+---
+import Layout from "../layouts/Layout.astro";
+import SiteHeader from "../components/SiteHeader.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+import { aboutSections, siteMeta } from "../data/site";
+---
+
+<Layout title={`关于 | ${siteMeta.title}`} description="关于这个网站、这条写作线，以及我到底在试着解决什么问题。">
+  <SiteHeader />
+
+  <main class="shell section">
+    <section class="page-intro">
+      <p class="kicker">关于</p>
+      <h1 class="page-title">这不是一份履历，而是一份立场说明。</h1>
+      <p class="lede">
+        我真正想讨论的，不是一个人如何更快适应系统，而是一个普通人在 AI 时代，为什么会越来越焦虑、越来越分散、越来越不像自己。
+      </p>
+    </section>
+
+    <section class="about-grid">
+      {
+        aboutSections.map((section) => (
+          <article class="card panel about-card">
+            <h2>{section.title}</h2>
+            <p>{section.body}</p>
+          </article>
+        ))
+      }
+    </section>
+  </main>
+
+  <SiteFooter />
+</Layout>
+
+<style>
+  .about-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+
+  .about-card {
+    display: grid;
+    gap: 0.85rem;
+  }
+
+  .about-card h2 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 3vw, 2rem);
+  }
+
+  .about-card p {
+    margin: 0;
+    color: var(--ink-muted);
+    line-height: 1.9;
+  }
+
+  @media (max-width: 960px) {
+    .about-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
