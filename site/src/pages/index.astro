@@ -44,9 +44,12 @@ const publications = [
     <section class="frontispiece">
       <div class="manifesto reveal reveal-one">
         <p class="eyebrow">一份关于人的独立刊物</p>
-        <h1>在一个替你思考的时代，重新成为自己。</h1>
+        <h1>
+          <span>别让这个时代，</span>
+          <span>替你活完一生。</span>
+        </h1>
         <p class="manifesto-copy">
-          我在这里写身体、思想、生计，也写技术、历史与文明。不是为了追赶信息，而是为了把被时代拆散的人，一点一点重新组织起来。
+          把身体、判断和生计，一样一样拿回来。这里写技术、历史与文明，但最终只追问一件事：一个人怎样不把自己交出去。
         </p>
         <a class="text-link" href="/start-here/">从第一篇开始 <span aria-hidden="true">→</span></a>
       </div>
@@ -166,6 +169,12 @@ const publications = [
     line-height: 1.03;
     letter-spacing: -0.055em;
     text-wrap: balance;
+  }
+
+  .manifesto h1 span {
+    display: block;
+    max-width: 100%;
+    white-space: nowrap;
   }
 
   .manifesto-copy {
@@ -543,7 +552,9 @@ const publications = [
 
   @media (max-width: 600px) {
     .manifesto h1 {
-      font-size: clamp(3.2rem, 16vw, 5rem);
+      max-width: 100%;
+      font-size: clamp(2.1rem, 10.5vw, 3.4rem);
+      letter-spacing: -0.045em;
     }
 
     .story-row {
